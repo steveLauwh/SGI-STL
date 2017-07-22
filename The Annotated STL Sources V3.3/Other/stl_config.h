@@ -149,6 +149,7 @@
 #     define __STL_UITHREADS
 # endif
 
+//使用 SGI STL，但却不是使用 GNU C++
 # if defined(__sgi) && !defined(__GNUC__)
 #   include <standards.h>
 #   if !defined(_BOOL)
