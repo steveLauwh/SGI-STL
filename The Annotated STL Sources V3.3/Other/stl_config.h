@@ -149,7 +149,7 @@
 #     define __STL_UITHREADS
 # endif
 
-//使用 SGI STL，但却不是使用 GNU C++
+//使用 SGI STL，但却不是使用 GNU C++，Linux 下使用 GNU C++，那么下面可以不具体看
 # if defined(__sgi) && !defined(__GNUC__)
 #   include <standards.h>
 #   if !defined(_BOOL)
@@ -253,7 +253,7 @@
 # endif
 
 
-
+// 下面是 GNU C++ 编译器支持
 # ifdef __GNUC__
 #   if __GNUC__ == 2 && __GNUC_MINOR__ <= 7
 #     define __STL_STATIC_TEMPLATE_MEMBER_BUG    /* 模板类支持静态数据成员初始化 */
@@ -267,9 +267,9 @@
 #     define __STL_NO_BAD_ALLOC
 #   endif
 #   if __GNUC__ == 2 && __GNUC_MINOR__ >= 8
-#     define __STL_CLASS_PARTIAL_SPECIALIZATION
-#     define __STL_FUNCTION_TMPL_PARTIAL_ORDER
-#     define __STL_EXPLICIT_FUNCTION_TMPL_ARGS
+#     define __STL_CLASS_PARTIAL_SPECIALIZATION   /* 针对对模板参数做部分特化 */
+#     define __STL_FUNCTION_TMPL_PARTIAL_ORDER    /* 针对对函数模板做部分特化 */
+#     define __STL_EXPLICIT_FUNCTION_TMPL_ARGS    /* 类模板中嵌套模板 */
 #     define __STL_MEMBER_TEMPLATES
 #     define __STL_CAN_THROW_RANGE_ERRORS
       //    g++ 2.8.1 supports member template functions, but not member
