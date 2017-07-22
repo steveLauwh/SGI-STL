@@ -8,6 +8,11 @@
 
 为静态数据成员进行定义，并设初始值。
 ```cpp
+template <typename T>
+class testClass {
+public:
+    static int _data;
+};
 template<> int testClass<int>::_data = 1;
 template<> int testClass<char>::_data = 2;
 ```
