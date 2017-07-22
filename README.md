@@ -13,6 +13,9 @@
   + 配接器(adapter)
   + 配置器(allocator)
 
+## GCC 编译器
+
+SGI STL 被归纳到 GNU C++ 标准程序库中，例如 gcc 使用 4.8.4 版本，STL源码 在 Linux 系统的位置是：/usr/include/c++/4.8.4/bits
 
 ## 参考资料
 
