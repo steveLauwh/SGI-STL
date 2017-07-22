@@ -256,7 +256,7 @@
 
 # ifdef __GNUC__
 #   if __GNUC__ == 2 && __GNUC_MINOR__ <= 7
-#     define __STL_STATIC_TEMPLATE_MEMBER_BUG
+#     define __STL_STATIC_TEMPLATE_MEMBER_BUG    /* 模板类支持静态数据成员初始化 */
 #   endif
 #   if __GNUC__ < 2 
 #     define __STL_NEED_TYPENAME
