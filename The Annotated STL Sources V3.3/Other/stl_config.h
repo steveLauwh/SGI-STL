@@ -27,7 +27,7 @@
 #ifndef __STL_CONFIG_H
 # define __STL_CONFIG_H
 
-// Flags:
+// Flags:  常量定义的解释
 // * __STL_NO_BOOL: defined if the compiler doesn't have bool as a builtin
 //   type.
 // * __STL_HAS_WCHAR_T: defined if the compier has wchar_t as a builtin type.
@@ -204,7 +204,7 @@
       !defined(_NAMESPACES)
 #     define __STL_NO_BAD_ALLOC
 #   endif
-#   if !defined(_NOTHREADS) && !defined(__STL_PTHREADS)
+#   if !defined(_NOTHREADS) && !defined(__STL_PTHREADS)   // 如果本程序库由 SGI 编译器来编译，并且使用这并未选择 pthreads 或其他 threads，就定义 __STL_SGI_THREADS.  
 #     define __STL_SGI_THREADS
 #   endif
 #   if defined(_LONGLONG) && defined(_SGIAPI) && _SGIAPI
@@ -269,8 +269,8 @@
 #   if __GNUC__ == 2 && __GNUC_MINOR__ >= 8
 #     define __STL_CLASS_PARTIAL_SPECIALIZATION   /* 针对对模板参数做部分特化 */
 #     define __STL_FUNCTION_TMPL_PARTIAL_ORDER    /* 针对对函数模板做部分特化 */
-#     define __STL_EXPLICIT_FUNCTION_TMPL_ARGS    /* 类模板中嵌套模板 */
-#     define __STL_MEMBER_TEMPLATES
+#     define __STL_EXPLICIT_FUNCTION_TMPL_ARGS    /* 调用一个 function template 时可以明白指定其 template arguments */
+#     define __STL_MEMBER_TEMPLATES               /* 类模板中嵌套成员模板 */
 #     define __STL_CAN_THROW_RANGE_ERRORS
       //    g++ 2.8.1 supports member template functions, but not member
       //    template nested classes.
@@ -368,7 +368,7 @@
 #     include <yvals.h>
 #     define __STL_DONT_USE_BOOL_TYPEDEF
 #   endif
-#   define __STL_NON_TYPE_TMPL_PARAM_BUG
+#   define __STL_NON_TYPE_TMPL_PARAM_BUG   /* 类模板中支持 non-type template 参数 */
 #   define __SGI_STL_NO_ARROW_OPERATOR
 #   define __STL_DEFAULT_CONSTRUCTOR_BUG
 #   ifdef _CPPUNWIND
@@ -434,7 +434,7 @@
 #   define typename
 # endif
 
-# ifdef __STL_LIMITED_DEFAULT_TEMPLATES
+# ifdef __STL_LIMITED_DEFAULT_TEMPLATES   /* 根据前一个 template parameters 设定下一个 template parameters 的默认值 */
 #   define __STL_DEPENDENT_DEFAULT_TMPL(_Tp)
 # else
 #   define __STL_DEPENDENT_DEFAULT_TMPL(_Tp) = _Tp
@@ -450,15 +450,15 @@
 #   define explicit
 # endif
 
-# ifdef __STL_EXPLICIT_FUNCTION_TMPL_ARGS
-#   define __STL_NULL_TMPL_ARGS <>
+# ifdef __STL_EXPLICIT_FUNCTION_TMPL_ARGS  
+#   define __STL_NULL_TMPL_ARGS <>       /* 出现在类模板的 friend 函数声明 */ 
 # else
 #   define __STL_NULL_TMPL_ARGS
 # endif
 
 # if defined(__STL_CLASS_PARTIAL_SPECIALIZATION) \
      || defined (__STL_PARTIAL_SPECIALIZATION_SYNTAX)
-#   define __STL_TEMPLATE_NULL template<>
+#   define __STL_TEMPLATE_NULL template<>       /* class template explicit specialization, 允许使用者不指定template<>，就完成显式特化 */
 # else
 #   define __STL_TEMPLATE_NULL
 # endif
@@ -490,10 +490,10 @@
 // a hook so that users can disable the std::rel_ops namespace, keeping 
 // the relational operator template in namespace std, without having to 
 // edit library headers.
-# if defined(__STL_HAS_NAMESPACES) && !defined(__STL_NO_NAMESPACES)
+# if defined(__STL_HAS_NAMESPACES) && !defined(__STL_NO_NAMESPACES)    // 如果我们将 STL 放入命名空间中，则定义 __STL_USE_NAMESPACES 
 #   define __STL_USE_NAMESPACES
 #   define __STD std
-#   define __STL_BEGIN_NAMESPACE namespace std {
+#   define __STL_BEGIN_NAMESPACE namespace std {         // 适当地定义与namespace 相关的 macros (如 __STD, __STL_BEGIN_NAMESPACE, 等.)  
 #   define __STL_END_NAMESPACE }
 #   if defined(__STL_FUNCTION_TMPL_PARTIAL_ORDER) && \
        !defined(__STL_NO_RELOPS_NAMESPACE)
@@ -530,6 +530,7 @@
 #   define __STD_QUALIFIER
 # endif
 
+// 适当地定义与 exception 相关的 macros (如 __STL_TRY, __STL_UNWIND, 等.)  
 # ifdef __STL_USE_EXCEPTIONS
 #   define __STL_TRY try
 #   define __STL_CATCH_ALL catch(...)
@@ -546,6 +547,7 @@
 #   define __STL_UNWIND(action) 
 # endif
 
+// 根据 __STL_ASSERTIONS 是否定义，将 __stl_assert 定义为一个测试操作或一个 null macro
 #ifdef __STL_ASSERTIONS
 # include <stdio.h>
 # define __stl_assert(expr) \
