@@ -112,4 +112,43 @@ private:
 
 整个实际范围从 first 开始，直到 last-1。
 
-## 
+## Function call 操作符(operator())
+
+C语言中，函数指针的缺点：无法持有自己的状态，也无法达到组件技术中的可适配性。
+
+仿函数：使用起来就像函数一样的东西。如果针对某个 class 进行 operator() 重载，它就成为一个仿函数。
+
+```cpp
+#include <iostream>
+using namespace std;
+
+template <class T>
+struct plus {
+    T operator() (const T& x, const T& y) const {
+        return x + y;
+    }    
+};
+
+template <class T>
+struct minus {
+    T operator() (const T& x, const T& y) const {
+        return x - y;
+    }    
+};
+
+int main()
+{
+    // 以下产生仿函数对象
+    plus<int> plusobj;
+    minus<int> minusobj;
+    
+    cout << plusobj(3, 5) << endl;
+    cout << minusobj(3, 5) << endl;
+    
+    // 仿函数的临时对象
+    cout << plus<int>()(43, 50) << endl;
+    cout << minus<int>()(43, 50) << endl;
+    
+    return 0;
+}
+```
