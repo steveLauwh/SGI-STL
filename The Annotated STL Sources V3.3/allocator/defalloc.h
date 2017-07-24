@@ -23,6 +23,8 @@
 // Standard-conforming allocators have a very different interface.  The
 // standard default allocator is declared in the header <memory>.
 
+/* 这是原始的 HP default allocator，提供它只是为了回溯兼容。 */
+
 #ifndef DEFALLOC_H
 #define DEFALLOC_H
 
@@ -36,7 +38,8 @@
 
 template <class T>
 inline T* allocate(ptrdiff_t size, T*) {
-    set_new_handler(0);
+    set_new_handler(0);   // 为了卸载目前的内存分配异常处理函数，强制C++在内存不够的时候抛出std:bad_alloc。
+    // 申请size个T类型大小的空间
     T* tmp = (T*)(::operator new((size_t)(size * sizeof(T))));
     if (tmp == 0) {
 	cerr << "out of memory" << endl; 
