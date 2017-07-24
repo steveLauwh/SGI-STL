@@ -43,6 +43,7 @@ __STL_BEGIN_NAMESPACE
 
 // Internal names
 
+// 将初值 __value 设定到指针所指的空间上。
 template <class _T1, class _T2>
 inline void _Construct(_T1* __p, const _T2& __value) {
   new ((void*) __p) _T1(__value);   // placement new，调用 _T1::_T1(__value);
@@ -59,6 +60,8 @@ inline void _Destroy(_Tp* __pointer) {
   __pointer->~_Tp();
 }
 
+// 若是 __false_type，这才以循环的方式遍历整个范围，并在循环中每经历一个对象就调用第一个版本的 destory()
+// 这是 non-trivial destructor
 template <class _ForwardIterator>
 void
 __destroy_aux(_ForwardIterator __first, _ForwardIterator __last, __false_type)
@@ -67,10 +70,11 @@ __destroy_aux(_ForwardIterator __first, _ForwardIterator __last, __false_type)
     destroy(&*__first);
 }
 
+// 若是 __true_type，什么都不做；这是 trivial destructor
 template <class _ForwardIterator> 
 inline void __destroy_aux(_ForwardIterator, _ForwardIterator, __true_type) {}
 
-// 
+// 利用__type_traits<T>判断该类型的析构函数是否需要做什么
 template <class _ForwardIterator, class _Tp>
 inline void 
 __destroy(_ForwardIterator __first, _ForwardIterator __last, _Tp*)
@@ -86,6 +90,7 @@ inline void _Destroy(_ForwardIterator __first, _ForwardIterator __last) {
   __destroy(__first, __last, __VALUE_TYPE(__first));
 }
 
+// 第二版本，destroy 泛型特化
 inline void _Destroy(char*, char*) {}
 inline void _Destroy(int*, int*) {}
 inline void _Destroy(long*, long*) {}
@@ -98,6 +103,7 @@ inline void _Destroy(wchar_t*, wchar_t*) {}
 // --------------------------------------------------
 // Old names from the HP STL.
 
+// construct() 接受一个指针 __p 和 一个初值 __value
 template <class _T1, class _T2>
 inline void construct(_T1* __p, const _T2& __value) {
   _Construct(__p, __value);
