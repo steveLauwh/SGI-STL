@@ -31,7 +31,7 @@
 #ifndef __SGI_STL_INTERNAL_CONSTRUCT_H
 #define __SGI_STL_INTERNAL_CONSTRUCT_H
 
-#include <new.h>  // 使用 placement new，需要先包含此文件
+#include <new.h>  // 使用 placement new，需要先包含此文件。
 
 __STL_BEGIN_NAMESPACE
 
@@ -54,13 +54,13 @@ inline void _Construct(_T1* __p) {
   new ((void*) __p) _T1();
 }
 
-// 第一个版本，接受一个指针，准备将该指针所指之物析构掉
+// 第一个版本，接受一个指针，准备将该指针所指之物析构掉。
 template <class _Tp>
 inline void _Destroy(_Tp* __pointer) {
   __pointer->~_Tp();
 }
 
-// 若是 __false_type，这才以循环的方式遍历整个范围，并在循环中每经历一个对象就调用第一个版本的 destory()
+// 若是 __false_type，这才以循环的方式遍历整个范围，并在循环中每经历一个对象就调用第一个版本的 destory()。
 // 这是 non-trivial destructor
 template <class _ForwardIterator>
 void
@@ -70,11 +70,11 @@ __destroy_aux(_ForwardIterator __first, _ForwardIterator __last, __false_type)
     destroy(&*__first);
 }
 
-// 若是 __true_type，什么都不做；这是 trivial destructor
+// 若是 __true_type，什么都不做；这是 trivial destructor。
 template <class _ForwardIterator> 
 inline void __destroy_aux(_ForwardIterator, _ForwardIterator, __true_type) {}
 
-// 利用__type_traits<T>判断该类型的析构函数是否需要做什么
+// 利用__type_traits<T>判断该类型的析构函数是否需要做什么。
 template <class _ForwardIterator, class _Tp>
 inline void 
 __destroy(_ForwardIterator __first, _ForwardIterator __last, _Tp*)
@@ -84,7 +84,7 @@ __destroy(_ForwardIterator __first, _ForwardIterator __last, _Tp*)
   __destroy_aux(__first, __last, _Trivial_destructor());
 }
 
-// 调用 __VALUE_TYPE() 获得迭代器所指对象的类别
+// 调用 __VALUE_TYPE() 获得迭代器所指对象的类别。
 template <class _ForwardIterator>
 inline void _Destroy(_ForwardIterator __first, _ForwardIterator __last) {
   __destroy(__first, __last, __VALUE_TYPE(__first));
@@ -103,7 +103,7 @@ inline void _Destroy(wchar_t*, wchar_t*) {}
 // --------------------------------------------------
 // Old names from the HP STL.
 
-// construct() 接受一个指针 __p 和 一个初值 __value
+// construct() 接受一个指针 __p 和 一个初值 __value。
 template <class _T1, class _T2>
 inline void construct(_T1* __p, const _T2& __value) {
   _Construct(__p, __value);
