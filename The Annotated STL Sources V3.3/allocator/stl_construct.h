@@ -31,7 +31,7 @@
 #ifndef __SGI_STL_INTERNAL_CONSTRUCT_H
 #define __SGI_STL_INTERNAL_CONSTRUCT_H
 
-#include <new.h>
+#include <new.h>  // 使用 placement new，需要先包含此文件
 
 __STL_BEGIN_NAMESPACE
 
@@ -45,7 +45,7 @@ __STL_BEGIN_NAMESPACE
 
 template <class _T1, class _T2>
 inline void _Construct(_T1* __p, const _T2& __value) {
-  new ((void*) __p) _T1(__value);
+  new ((void*) __p) _T1(__value);   // placement new，调用 _T1::_T1(__value);
 }
 
 template <class _T1>
@@ -53,6 +53,7 @@ inline void _Construct(_T1* __p) {
   new ((void*) __p) _T1();
 }
 
+// 第一个版本，接受一个指针，准备将该指针所指之物析构掉
 template <class _Tp>
 inline void _Destroy(_Tp* __pointer) {
   __pointer->~_Tp();
@@ -69,6 +70,7 @@ __destroy_aux(_ForwardIterator __first, _ForwardIterator __last, __false_type)
 template <class _ForwardIterator> 
 inline void __destroy_aux(_ForwardIterator, _ForwardIterator, __true_type) {}
 
+// 
 template <class _ForwardIterator, class _Tp>
 inline void 
 __destroy(_ForwardIterator __first, _ForwardIterator __last, _Tp*)
@@ -78,6 +80,7 @@ __destroy(_ForwardIterator __first, _ForwardIterator __last, _Tp*)
   __destroy_aux(__first, __last, _Trivial_destructor());
 }
 
+// 调用 __VALUE_TYPE() 获得迭代器所指对象的类别
 template <class _ForwardIterator>
 inline void _Destroy(_ForwardIterator __first, _ForwardIterator __last) {
   __destroy(__first, __last, __VALUE_TYPE(__first));
@@ -110,6 +113,7 @@ inline void destroy(_Tp* __pointer) {
   _Destroy(__pointer);
 }
 
+// 第二个版本，接受 __first 和 __last 两个迭代器，将 [__first, __last)范围内的所有对象析构掉。
 template <class _ForwardIterator>
 inline void destroy(_ForwardIterator __first, _ForwardIterator __last) {
   _Destroy(__first, __last);
