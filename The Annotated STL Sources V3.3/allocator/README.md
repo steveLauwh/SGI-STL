@@ -17,5 +17,13 @@ class vector {...};
 vector<int, std::alloc> iv; 
 ```
 
-* defalloc.h----SGI 标准的空间配置器，std::allocator
+* <defalloc.h>----SGI 标准的空间配置器，std::allocator
+
+allocator 只是基层内存配置/释放行为(::operator::new 和 ::operator::delete)的一层薄薄的包装，并没有考虑到任何效率上的强化。
+
+* SGI 特殊的空间配置器，std::alloc
+
+  + <stl_construct.h>：定义了全局函数 construct() 和 destroy()，负责对象的构造和析构。 
+  + <stl_alloc.h>：定义了一、二级配置器，配置器名为 alloc。
+  + <stl_uninitialized.h>：定义了全局函数，用来填充(fill)或复制(copy)大块内存数据。
 
