@@ -490,7 +490,7 @@
 // a hook so that users can disable the std::rel_ops namespace, keeping 
 // the relational operator template in namespace std, without having to 
 // edit library headers.
-# if defined(__STL_HAS_NAMESPACES) && !defined(__STL_NO_NAMESPACES)    // 如果我们将 STL 放入命名空间中，则定义 __STL_USE_NAMESPACES 
+# if defined(__STL_HAS_NAMESPACES) && !defined(__STL_NO_NAMESPACES)    // 如果我们将 STL 放入命名空间中，则定义 __STL_USE_NAMESPACES.
 #   define __STL_USE_NAMESPACES
 #   define __STD std
 #   define __STL_BEGIN_NAMESPACE namespace std {         // 适当地定义与namespace 相关的 macros (如 __STD, __STL_BEGIN_NAMESPACE, 等.)  
