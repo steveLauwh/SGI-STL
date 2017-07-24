@@ -15,6 +15,8 @@
  *   You should not attempt to use it directly.
  */
 
+// <stl_alloc.h> 被包含到其它的 STL 头文件中，并不是直接使用
+
 #ifndef __SGI_STL_INTERNAL_ALLOC_H
 #define __SGI_STL_INTERNAL_ALLOC_H
 
@@ -187,6 +189,7 @@ void* __malloc_alloc_template<__inst>::_S_oom_realloc(void* __p, size_t __n)
 
 typedef __malloc_alloc_template<0> malloc_alloc;
 
+// 单纯地转调用，调用传递给配置器(第一级或第二级)
 template<class _Tp, class _Alloc>
 class simple_alloc {
 
@@ -247,7 +250,7 @@ public:
 
 # ifdef __USE_MALLOC
 
-typedef malloc_alloc alloc;
+typedef malloc_alloc alloc;  // 令 alloc 为第一级配置器
 typedef malloc_alloc single_client_alloc;
 
 # else
@@ -399,7 +402,7 @@ public:
 
 } ;
 
-typedef __default_alloc_template<__NODE_ALLOCATOR_THREADS, 0> alloc;
+typedef __default_alloc_template<__NODE_ALLOCATOR_THREADS, 0> alloc;  // 令 alloc 为第二级配置器
 typedef __default_alloc_template<false, 0> single_client_alloc;
 
 template <bool __threads, int __inst>
