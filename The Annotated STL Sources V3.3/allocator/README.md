@@ -32,10 +32,6 @@ allocator 只是基层内存配置/释放行为(::operator::new 和 ::operator::
 具体看 <stl_construct.h> 源码，功能是构造和析构操作。
 
 * 空间的配置和释放，std::alloc
-
-对象构造前的空间配置 和 对象析构后的空间释放，具体看 <stl_alloc.h>。
-
-SGI 设计的哲学：
   + 向 system heap 要求空间
   + 考虑多线程(multi-threads)状态
   + 考虑内存不足时的应变措施
