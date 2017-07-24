@@ -19,7 +19,7 @@ vector<int, std::alloc> iv;
 
 * <defalloc.h>----SGI 标准的空间配置器，std::allocator
 
-allocator 只是基层内存配置/释放行为(::operator::new 和 ::operator::delete)的一层薄薄的包装，并没有考虑到任何效率上的强化。
+  allocator 只是基层内存配置/释放行为(::operator::new 和 ::operator::delete)的一层薄薄的包装，并没有考虑到任何效率上的强化。
 
 * SGI 特殊的空间配置器，std::alloc
 
@@ -29,7 +29,7 @@ allocator 只是基层内存配置/释放行为(::operator::new 和 ::operator::
 
 * 构造和析构基本工具
 
-具体看 <stl_construct.h> 源码，功能是构造和析构操作。
+  具体看 <stl_construct.h> 源码，功能是构造和析构操作。
 
 * 空间的配置和释放，std::alloc
   + 向 system heap 要求空间
@@ -37,3 +37,4 @@ allocator 只是基层内存配置/释放行为(::operator::new 和 ::operator::
   + 考虑内存不足时的应变措施
   + 考虑过多 “小型区块” 可能造成的内存碎片问题
 
+  对象构造前的空间配置 和 对象析构后的空间释放，具体看 <stl_alloc.h>。
