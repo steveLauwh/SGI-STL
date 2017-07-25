@@ -305,6 +305,7 @@ typedef malloc_alloc single_client_alloc;
 #endif
 
 // SGI STL 第二级配置器，GCC 默认使用第二级配置器，其作用是避免太多小额区块造成内存的碎片
+// 无 “template 类型参数”，且第二参数也没有用，其中第一参数用于多线程环境下
 template <bool threads, int inst>
 class __default_alloc_template {
 
@@ -312,17 +313,19 @@ private:
   // Really we should use static const int x = N
   // instead of enum { x = N }, but few compilers accept the former.
 #if ! (defined(__SUNPRO_CC) || defined(__GNUC__))
-    enum {_ALIGN = 8};
-    enum {_MAX_BYTES = 128};
-    enum {_NFREELISTS = 16}; // _MAX_BYTES/_ALIGN
-# endif
+    enum {_ALIGN = 8};  // 小型区块的上调边界
+    enum {_MAX_BYTES = 128}; // 小区区块的上限
+    enum {_NFREELISTS = 16}; // _MAX_BYTES/_ALIGN  free-list 的个数
+# endif 
+  // 将任何小额区块的内存需求量上调至 8 的倍数
   static size_t
   _S_round_up(size_t __bytes) 
     { return (((__bytes) + (size_t) _ALIGN-1) & ~((size_t) _ALIGN - 1)); }
 
 __PRIVATE:
+  // free-list 的节点结构，降低维护链表 list 带来的额外负担
   union _Obj {
-        union _Obj* _M_free_list_link;
+        union _Obj* _M_free_list_link;  // 利用联合体特点
         char _M_client_data[1];    /* The client sees this.        */
   };
 private:
@@ -330,8 +333,9 @@ private:
     static _Obj* __STL_VOLATILE _S_free_list[]; 
         // Specifying a size results in duplicate def for 4.1
 # else
-    static _Obj* __STL_VOLATILE _S_free_list[_NFREELISTS];  // 维护 16 个自由链表(free list)，负责 16 种小型区块的次配置能力
-# endif
+    static _Obj* __STL_VOLATILE _S_free_list[_NFREELISTS];  // 维护 16 个空闲链表(free list)，初始化为0，即每个链表中都没有空闲数据块  
+# endif 
+  //根据申请数据块大小找到相应空闲链表的下标，n 从 0 起算
   static  size_t _S_freelist_index(size_t __bytes) {
         return (((__bytes) + (size_t)_ALIGN-1)/(size_t)_ALIGN - 1);
   }
@@ -343,8 +347,8 @@ private:
   static char* _S_chunk_alloc(size_t __size, int& __nobjs);
 
   // Chunk allocation state.
-  static char* _S_start_free;
-  static char* _S_end_free;
+  static char* _S_start_free;  // 内存池起始位置。只在 _S_chunk_alloc() 中变化
+  static char* _S_end_free;    // 内存池结束位置。只在 _S_chunk_alloc() 中变化
   static size_t _S_heap_size;
 
 # ifdef __STL_THREADS
@@ -365,6 +369,7 @@ private:
 public:
 
   /* __n must be > 0      */
+  // 申请大小为n的数据块，返回该数据块的起始地址 
   static void* allocate(size_t __n)
   {
     void* __ret = 0;
@@ -374,6 +379,7 @@ public:
       __ret = malloc_alloc::allocate(__n);
     }
     else {
+      // 根据申请空间的大小寻找相应的空闲链表（16个空闲链表中的一个）
       _Obj* __STL_VOLATILE* __my_free_list
           = _S_free_list + _S_freelist_index(__n);
       // Acquire the lock here with a constructor call.
@@ -384,9 +390,11 @@ public:
       _Lock __lock_instance;
 #     endif
       _Obj* __RESTRICT __result = *__my_free_list;
+      // 空闲链表没有可用数据块，就将区块大小先调整至 8 倍数边界，然后调用 _S_refill() 重新填充
       if (__result == 0)
         __ret = _S_refill(_S_round_up(__n));
       else {
+        // 如果空闲链表中有空闲数据块，则取出一个，并把空闲链表的指针指向下一个数据块  
         *__my_free_list = __result -> _M_free_list_link;
         __ret = __result;
       }
@@ -396,13 +404,14 @@ public:
   };
 
   /* __p may not be 0 */
+  // 空间释放函数 deallocate()
   static void deallocate(void* __p, size_t __n)
   {
-    if (__n > (size_t) _MAX_BYTES)
-      malloc_alloc::deallocate(__p, __n);
+    if (__n > (size_t) _MAX_BYTES)   
+      malloc_alloc::deallocate(__p, __n);   // 大于 128 bytes，就调用第一级配置器的释放
     else {
       _Obj* __STL_VOLATILE*  __my_free_list
-          = _S_free_list + _S_freelist_index(__n);
+          = _S_free_list + _S_freelist_index(__n);   // 否则将空间回收到相应空闲链表（由释放块的大小决定）中  
       _Obj* __q = (_Obj*)__p;
 
       // acquire lock
@@ -410,7 +419,7 @@ public:
       /*REFERENCED*/
       _Lock __lock_instance;
 #       endif /* _NOTHREADS */
-      __q -> _M_free_list_link = *__my_free_list;
+      __q -> _M_free_list_link = *__my_free_list;   // 调整空闲链表，回收数据块
       *__my_free_list = __q;
       // lock is released here
     }
@@ -445,29 +454,31 @@ inline bool operator!=(const __default_alloc_template<__threads, __inst>&,
 /* the malloc heap too much.                                            */
 /* We assume that size is properly aligned.                             */
 /* We hold the allocation lock.                                         */
+// 从内存池中取空间
 template <bool __threads, int __inst>
 char*
 __default_alloc_template<__threads, __inst>::_S_chunk_alloc(size_t __size, 
                                                             int& __nobjs)
 {
     char* __result;
-    size_t __total_bytes = __size * __nobjs;
-    size_t __bytes_left = _S_end_free - _S_start_free;
+    size_t __total_bytes = __size * __nobjs;  // 需要申请空间的大小 
+    size_t __bytes_left = _S_end_free - _S_start_free;  // 计算内存池剩余空间
 
-    if (__bytes_left >= __total_bytes) {
+    if (__bytes_left >= __total_bytes) {  // 内存池剩余空间完全满足申请
         __result = _S_start_free;
         _S_start_free += __total_bytes;
         return(__result);
-    } else if (__bytes_left >= __size) {
+    } else if (__bytes_left >= __size) {  // 内存池剩余空间不能满足申请，提供一个以上的区块
         __nobjs = (int)(__bytes_left/__size);
         __total_bytes = __size * __nobjs;
         __result = _S_start_free;
         _S_start_free += __total_bytes;
         return(__result);
-    } else {
+    } else {                             // 内存池剩余空间连一个区块的大小都无法提供                      
         size_t __bytes_to_get = 
 	  2 * __total_bytes + _S_round_up(_S_heap_size >> 4);
         // Try to make use of the left-over piece.
+	// 内存池的剩余空间分给合适的空闲链表
         if (__bytes_left > 0) {
             _Obj* __STL_VOLATILE* __my_free_list =
                         _S_free_list + _S_freelist_index(__bytes_left);
@@ -475,8 +486,8 @@ __default_alloc_template<__threads, __inst>::_S_chunk_alloc(size_t __size,
             ((_Obj*)_S_start_free) -> _M_free_list_link = *__my_free_list;
             *__my_free_list = (_Obj*)_S_start_free;
         }
-        _S_start_free = (char*)malloc(__bytes_to_get);
-        if (0 == _S_start_free) {
+        _S_start_free = (char*)malloc(__bytes_to_get);  // 配置 heap 空间，用来补充内存池
+        if (0 == _S_start_free) {  // heap 空间不足，malloc() 失败
             size_t __i;
             _Obj* __STL_VOLATILE* __my_free_list;
 	    _Obj* __p;
@@ -498,14 +509,14 @@ __default_alloc_template<__threads, __inst>::_S_chunk_alloc(size_t __size,
                 }
             }
 	    _S_end_free = 0;	// In case of exception.
-            _S_start_free = (char*)malloc_alloc::allocate(__bytes_to_get);
+            _S_start_free = (char*)malloc_alloc::allocate(__bytes_to_get);  // 调用第一级配置器
             // This should either throw an
             // exception or remedy the situation.  Thus we assume it
             // succeeded.
         }
         _S_heap_size += __bytes_to_get;
         _S_end_free = _S_start_free + __bytes_to_get;
-        return(_S_chunk_alloc(__size, __nobjs));
+        return(_S_chunk_alloc(__size, __nobjs));  // 递归调用自己
     }
 }
 
@@ -518,6 +529,7 @@ void*
 __default_alloc_template<__threads, __inst>::_S_refill(size_t __n)
 {
     int __nobjs = 20;
+    // 调用 _S_chunk_alloc()，缺省取 20 个区块作为 free list 的新节点
     char* __chunk = _S_chunk_alloc(__n, __nobjs);
     _Obj* __STL_VOLATILE* __my_free_list;
     _Obj* __result;
@@ -525,12 +537,13 @@ __default_alloc_template<__threads, __inst>::_S_refill(size_t __n)
     _Obj* __next_obj;
     int __i;
 
+    // 如果只获得一个数据块，那么这个数据块就直接分给调用者，空闲链表中不会增加新节点
     if (1 == __nobjs) return(__chunk);
-    __my_free_list = _S_free_list + _S_freelist_index(__n);
+    __my_free_list = _S_free_list + _S_freelist_index(__n);  // 否则根据申请数据块的大小找到相应空闲链表  
 
     /* Build free list in chunk */
       __result = (_Obj*)__chunk;
-      *__my_free_list = __next_obj = (_Obj*)(__chunk + __n);
+      *__my_free_list = __next_obj = (_Obj*)(__chunk + __n);  // 第0个数据块给调用者，地址访问即chunk~chunk + n - 1  
       for (__i = 1; ; __i++) {
         __current_obj = __next_obj;
         __next_obj = (_Obj*)((char*)__next_obj + __n);
@@ -571,7 +584,7 @@ __default_alloc_template<threads, inst>::reallocate(void* __p,
         __STL_MUTEX_INITIALIZER;
 #endif
 
-
+// 静态成员变量的定义与初值设定
 template <bool __threads, int __inst>
 char* __default_alloc_template<__threads, __inst>::_S_start_free = 0;
 
