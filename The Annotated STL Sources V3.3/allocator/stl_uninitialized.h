@@ -71,6 +71,7 @@ __uninitialized_copy(_InputIter __first, _InputIter __last,
   return __uninitialized_copy_aux(__first, __last, __result, _Is_POD());
 }
 
+// 内存的配置与对象的构造行为分离开来。
 template <class _InputIter, class _ForwardIter>
 inline _ForwardIter
   uninitialized_copy(_InputIter __first, _InputIter __last,
