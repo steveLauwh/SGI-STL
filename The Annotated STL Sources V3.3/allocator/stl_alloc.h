@@ -107,11 +107,14 @@ __STL_BEGIN_NAMESPACE
 # endif
 #endif
 
+// SGI STL 第一级配置器
+// 无 “template 类型参数”，“非类型参数 __inst”，完全没有用
 template <int __inst>
 class __malloc_alloc_template {
 
 private:
-
+  
+  // 以下函数将用来处理内存不足的情况
   static void* _S_oom_malloc(size_t);
   static void* _S_oom_realloc(void*, size_t);
 
@@ -121,25 +124,32 @@ private:
 
 public:
 
+  // 第一级配置器直接调用 malloc()
   static void* allocate(size_t __n)
   {
     void* __result = malloc(__n);
+    // 以下无法满足需求时，改用 _S_oom_malloc()
     if (0 == __result) __result = _S_oom_malloc(__n);
     return __result;
   }
 
+  // 第一级配置器直接调用 free()
   static void deallocate(void* __p, size_t /* __n */)
   {
     free(__p);
   }
-
+  
+  // 第一级配置器直接调用 realloc()
   static void* reallocate(void* __p, size_t /* old_sz */, size_t __new_sz)
   {
     void* __result = realloc(__p, __new_sz);
+    // 以下无法满足需求时，改用 _S_oom_realloc()
     if (0 == __result) __result = _S_oom_realloc(__p, __new_sz);
     return __result;
   }
 
+  // 以下仿真 C++ 的 set_new_handler()，可以通过它指定自己的 out-of-memory handler
+  // 为什么不使用 C++ new-handler 机制，因为第一级配置器并没有 ::operator new 来配置内存
   static void (* __set_malloc_handler(void (*__f)()))()
   {
     void (* __old)() = __malloc_alloc_oom_handler;
@@ -152,6 +162,7 @@ public:
 // malloc_alloc out-of-memory handling
 
 #ifndef __STL_STATIC_TEMPLATE_MEMBER_BUG
+// 初值为0，由客户自行设定
 template <int __inst>
 void (* __malloc_alloc_template<__inst>::__malloc_alloc_oom_handler)() = 0;
 #endif
@@ -163,11 +174,12 @@ __malloc_alloc_template<__inst>::_S_oom_malloc(size_t __n)
     void (* __my_malloc_handler)();
     void* __result;
 
+    // 不断尝试释放、配置
     for (;;) {
         __my_malloc_handler = __malloc_alloc_oom_handler;
         if (0 == __my_malloc_handler) { __THROW_BAD_ALLOC; }
-        (*__my_malloc_handler)();
-        __result = malloc(__n);
+        (*__my_malloc_handler)();  // 调用处理例程，企图释放内存
+        __result = malloc(__n);   // 再次尝试配置内存
         if (__result) return(__result);
     }
 }
@@ -178,22 +190,26 @@ void* __malloc_alloc_template<__inst>::_S_oom_realloc(void* __p, size_t __n)
     void (* __my_malloc_handler)();
     void* __result;
 
+    //  给一个已经分配了地址的指针重新分配空间，参数 __p 为原有的空间地址，__n 是重新申请的地址长度
     for (;;) {
+	// 当 "内存不足处理例程" 并未被客户设定，便调用 __THROW_BAD_ALLOC，丢出 bad_alloc 异常信息
         __my_malloc_handler = __malloc_alloc_oom_handler;
         if (0 == __my_malloc_handler) { __THROW_BAD_ALLOC; }
-        (*__my_malloc_handler)();
-        __result = realloc(__p, __n);
+        (*__my_malloc_handler)();   // 调用处理例程，企图释放内存
+        __result = realloc(__p, __n);  // 再次尝试配置内存，扩大内存大小
         if (__result) return(__result);
     }
 }
 
+// 直接将参数 __inst 指定为0
 typedef __malloc_alloc_template<0> malloc_alloc;
 
-// 单纯地转调用，调用传递给配置器(第一级或第二级)
+// 单纯地转调用，调用传递给配置器(第一级或第二级)；多一层包装，使 _Alloc 具备标准接口
 template<class _Tp, class _Alloc>
 class simple_alloc {
 
 public:
+    // 配置 n 个元素
     static _Tp* allocate(size_t __n)
       { return 0 == __n ? 0 : (_Tp*) _Alloc::allocate(__n * sizeof (_Tp)); }
     static _Tp* allocate(void)
@@ -288,6 +304,7 @@ typedef malloc_alloc single_client_alloc;
   enum {_NFREELISTS = 16}; // _MAX_BYTES/_ALIGN
 #endif
 
+// SGI STL 第二级配置器，GCC 默认使用第二级配置器，其作用是避免太多小额区块造成内存的碎片
 template <bool threads, int inst>
 class __default_alloc_template {
 
@@ -313,7 +330,7 @@ private:
     static _Obj* __STL_VOLATILE _S_free_list[]; 
         // Specifying a size results in duplicate def for 4.1
 # else
-    static _Obj* __STL_VOLATILE _S_free_list[_NFREELISTS]; 
+    static _Obj* __STL_VOLATILE _S_free_list[_NFREELISTS];  // 维护 16 个自由链表(free list)，负责 16 种小型区块的次配置能力
 # endif
   static  size_t _S_freelist_index(size_t __bytes) {
         return (((__bytes) + (size_t)_ALIGN-1)/(size_t)_ALIGN - 1);
@@ -352,6 +369,7 @@ public:
   {
     void* __ret = 0;
 
+    // 如果需求区块大于 128 bytes，就转调用第一级配置
     if (__n > (size_t) _MAX_BYTES) {
       __ret = malloc_alloc::allocate(__n);
     }
