@@ -7,11 +7,11 @@
   
 * The Annotated STL Sources V3.3                                     -----学习源代码的注释
   + [容器 (container)](https://github.com/steveLauwh/SGI-STL/tree/master/The%20Annotated%20STL%20Sources%20V3.3/container) ：序列式容器 (sequence container) 和 关联式容器 (associattive container)
-  + 算法 (algorithm)
-  + 迭代器 (iterator)
-  + 仿函数或函数对象 (functor / function object)
-  + 配接器(adapter)
-  + 配置器(allocator)
+  + [算法 (algorithm)](https://github.com/steveLauwh/SGI-STL/tree/master/The%20Annotated%20STL%20Sources%20V3.3/algorithm)
+  + [迭代器 (iterator)](https://github.com/steveLauwh/SGI-STL/tree/master/The%20Annotated%20STL%20Sources%20V3.3/iterator)
+  + [仿函数或函数对象 (functor / function object)](https://github.com/steveLauwh/SGI-STL/tree/master/The%20Annotated%20STL%20Sources%20V3.3/functor-function%20object)
+  + [配接器(adapter)](https://github.com/steveLauwh/SGI-STL/tree/master/The%20Annotated%20STL%20Sources%20V3.3/adapter)
+  + [配置器(allocator)](https://github.com/steveLauwh/SGI-STL/tree/master/The%20Annotated%20STL%20Sources%20V3.3/allocator)
 
 ## GCC 编译器
 
