@@ -14,6 +14,8 @@ auto_ptr：用来包装原生指针(native pointer)的对象，在头文件 <mem
 
 ## 迭代器相应类型(associated types)
 
+迭代器所指对象的类型。
+
 利用 function template 的参数推导机制，只能推导出参数的类型，无法推导出函数返回值类型。
 
 迭代器相应类型有五种：
@@ -35,7 +37,7 @@ struct iterator_traits
 {
     typedef typename I::iterator_category  iterator_category;
     typedef typename I::value_type  value_type;
-    typedef typename I:difference_type  difference_type;
+    typedef typename I::difference_type  difference_type;
     typedef typename I::pointer  pointer;
     typedef typename I::reference  reference;
 };
