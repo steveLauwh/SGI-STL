@@ -35,6 +35,7 @@ template<class _Tp1> struct auto_ptr_ref {
 
 #endif
 
+// 智能指针 smart pointer
 template <class _Tp> class auto_ptr {
 private:
   _Tp* _M_ptr;
@@ -45,6 +46,8 @@ public:
   // 将构造函数声明为 explicit(显式) 的方式可以抑制隐式转换
   //  C++ 中的 explicit 关键字只能用于修饰只有一个参数的类构造函数
   explicit auto_ptr(_Tp* __p = 0) __STL_NOTHROW : _M_ptr(__p) {}
+  
+  // auto_ptr 可以以相同类型的 auto_ptr 进行构造
   auto_ptr(auto_ptr& __a) __STL_NOTHROW : _M_ptr(__a.release()) {}
 
 #ifdef __STL_MEMBER_TEMPLATES
