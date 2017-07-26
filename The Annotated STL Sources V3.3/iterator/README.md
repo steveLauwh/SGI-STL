@@ -33,11 +33,11 @@ template partial specialization 模板偏特化：针对 template 参数更进�
 tempalte<typename I>
 struct iterator_traits
 {
-    typedef typename I::iterator_category iterator_category;
-    typedef typename I::value_type value_type;
-    typedef typeanme I:difference_type difference_type;
-    typedef typename I::pointer pointer;
-    typedef typename I::reference reference;
+    typedef typename I::iterator_category  iterator_category;
+    typedef typename I::value_type  value_type;
+    typedef typename I:difference_type  difference_type;
+    typedef typename I::pointer  pointer;
+    typedef typename I::reference  reference;
 };
 ```
 
