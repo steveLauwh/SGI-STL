@@ -28,6 +28,7 @@
  *   You should not attempt to use it directly.
  */
 
+// 内部头文件，被 STL 标准头文件 <iterator> 包含
 #ifndef __SGI_STL_INTERNAL_ITERATOR_BASE_H
 #define __SGI_STL_INTERNAL_ITERATOR_BASE_H
 
