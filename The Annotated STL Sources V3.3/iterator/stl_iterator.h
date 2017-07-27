@@ -27,7 +27,7 @@
 /* NOTE: This is an internal header file, included by other STL headers.
  *   You should not attempt to use it directly.
  */
-
+// 内部头文件，包含预定义的 iterator
 #ifndef __SGI_STL_INTERNAL_ITERATOR_H
 #define __SGI_STL_INTERNAL_ITERATOR_H
 
