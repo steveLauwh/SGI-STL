@@ -24,6 +24,7 @@
  * purpose.  It is provided "as is" without express or implied warranty.
  */
 
+// 实现看 <stl_iterator.h>
 #ifndef __SGI_STL_ITERATOR
 #define __SGI_STL_ITERATOR
 
