@@ -40,6 +40,7 @@
 
 __STL_BEGIN_NAMESPACE
 
+// 五种迭代器类型
 struct input_iterator_tag {};
 struct output_iterator_tag {};
 struct forward_iterator_tag : public input_iterator_tag {};
@@ -92,6 +93,7 @@ template <class _Tp, class _Distance> struct random_access_iterator {
   typedef _Tp&                       reference;
 };
 
+// 用户自己的写的迭代器最好继承此 std::iterator
 #ifdef __STL_USE_NAMESPACES
 template <class _Category, class _Tp, class _Distance = ptrdiff_t,
           class _Pointer = _Tp*, class _Reference = _Tp&>
@@ -106,6 +108,7 @@ struct iterator {
 
 #ifdef __STL_CLASS_PARTIAL_SPECIALIZATION
 
+// traits 获取各个迭代器的特性(相应类型)
 template <class _Iterator>
 struct iterator_traits {
   typedef typename _Iterator::iterator_category iterator_category;
@@ -115,6 +118,7 @@ struct iterator_traits {
   typedef typename _Iterator::reference         reference;
 };
 
+// 针对原生指针(native pointer)而设计的 traits 偏特化版
 template <class _Tp>
 struct iterator_traits<_Tp*> {
   typedef random_access_iterator_tag iterator_category;
@@ -124,6 +128,7 @@ struct iterator_traits<_Tp*> {
   typedef _Tp&                        reference;
 };
 
+// 针对原生之 pointer-to-const 而设计的 traits 偏特化版
 template <class _Tp>
 struct iterator_traits<const _Tp*> {
   typedef random_access_iterator_tag iterator_category;
