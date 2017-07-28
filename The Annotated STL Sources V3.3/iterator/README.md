@@ -43,3 +43,44 @@ struct iterator_traits
 };
 ```
 
+* 迭代器相应类型之一：value type
+
+value type 就是迭代器所指对象的类型。
+
+```cpp
+template <class T>
+typename iterator_traits<I>::value_type func(I ite)
+{
+    return *ite;
+}
+```
+
+* 迭代器相应类型之二：difference type
+
+difference type 用来表示两个迭代器之间的距离。
+
+```cpp
+template <class I, class T>
+typename iterator_traits<I>::difference_type cout(I first, I last, const T& value)
+{
+    typename iterator_traits<I>::difference_type n = 0;
+    for (; first != last; ++first)
+    {
+        ++n;
+    }
+    
+    return n;
+}
+```
+
+* 迭代器相应类型之三：reference type
+
+在 c++ 中，函数如果要传回左值，都是以 by reference 的方式进行，所以如果 p 是一个迭代器，它的 value type 是 T ，那么`*p` 应该是T& (即reference type)
+
+* 迭代器相应类型之四：pointer type
+
+* 迭代器相应类型之五：iterator_category
+
+traits 本质是什么？
+
+多一层间接性，换来灵活性。
