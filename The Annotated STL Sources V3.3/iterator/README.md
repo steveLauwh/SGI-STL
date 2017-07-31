@@ -84,3 +84,6 @@ typename iterator_traits<I>::difference_type cout(I first, I last, const T& valu
 traits 本质是什么？
 
 多一层间接性，换来灵活性。
+
+-----
+iterator_traits 负责萃取迭代器的特性，__type_traits 负责萃取类型的特性。
