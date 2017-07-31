@@ -47,7 +47,9 @@ template <class T> inline void copy(T* source,T* destination,int n) {
 }
 */
 
+/* __type_traits: 提供了一种机制，允许针对不同的类型属性，在编译时期完成函数派送决定(function dispatch). */
 
+// class 没有任何成员，不会带来额外负担，却又能够标示真假。
 struct __true_type {
 };
 
