@@ -16,7 +16,9 @@
 * stack (内含一个 deque)  (adapter 配接器)
 * queue (内含一个 deque)  (adapter 配接器)
 
+怎么理解序列式容器，其中的元素都可序(ordered), 但未必有序(sorted)？
 
+ordered 是容器集合被排序，可以使用指定的顺序去遍历集合。 sorted 是一个容器集合是根据某些规则确定排序的。
 
 ## 关联式容器(associative container)
 
