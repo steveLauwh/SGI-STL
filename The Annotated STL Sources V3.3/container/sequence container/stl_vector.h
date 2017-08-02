@@ -36,7 +36,7 @@
 __STL_BEGIN_NAMESPACE 
 
 #if defined(__sgi) && !defined(__GNUC__) && (_MIPS_SIM != _MIPS_SIM_ABI32)
-#pragma set woff 1174
+#pragma set woff 1174   // 禁止编译器 1174警告
 #pragma set woff 1375
 #endif
 
@@ -119,6 +119,7 @@ struct _Vector_base
 
 #else /* __STL_USE_STD_ALLOCATORS */
 
+// 默认走这里，vector base 构造函数和析构函数
 template <class _Tp, class _Alloc> 
 class _Vector_base {
 public:
@@ -138,10 +139,11 @@ public:
   ~_Vector_base() { _M_deallocate(_M_start, _M_end_of_storage - _M_start); }
 
 protected:
-  _Tp* _M_start;
-  _Tp* _M_finish;
-  _Tp* _M_end_of_storage;
+  _Tp* _M_start;  // 表示目前使用空间的头
+  _Tp* _M_finish; // 表示目前使用空间的尾
+  _Tp* _M_end_of_storage; // 表示目前可用空间的尾
 
+  // simple_alloc 是 SGI STL 的空间配置器
   typedef simple_alloc<_Tp, _Alloc> _M_data_allocator;
   _Tp* _M_allocate(size_t __n)
     { return _M_data_allocator::allocate(__n); }
@@ -151,6 +153,7 @@ protected:
 
 #endif /* __STL_USE_STD_ALLOCATORS */
 
+// alloc 是 SGI STL 的空间配置器
 template <class _Tp, class _Alloc = __STL_DEFAULT_ALLOCATOR(_Tp) >
 class vector : protected _Vector_base<_Tp, _Alloc> 
 {
@@ -161,10 +164,11 @@ class vector : protected _Vector_base<_Tp, _Alloc>
 private:
   typedef _Vector_base<_Tp, _Alloc> _Base;
 public:
+  // vector 的嵌套类型定义
   typedef _Tp value_type;
-  typedef value_type* pointer;
+  typedef value_type* pointer;  
   typedef const value_type* const_pointer;
-  typedef value_type* iterator;
+  typedef value_type* iterator; // vector 的迭代器是普通指针
   typedef const value_type* const_iterator;
   typedef value_type& reference;
   typedef const value_type& const_reference;
