@@ -144,7 +144,7 @@ protected:
   _Tp* _M_end_of_storage; // 表示目前可用空间的尾
 
   // simple_alloc 是 SGI STL 的空间配置器
-  typedef simple_alloc<_Tp, _Alloc> _M_data_allocator;
+  typedef simple_alloc<_Tp, _Alloc> _M_data_allocator;  // 以元素大小为配置单位
   _Tp* _M_allocate(size_t __n)
     { return _M_data_allocator::allocate(__n); }
   void _M_deallocate(_Tp* __p, size_t __n) 
