@@ -417,6 +417,8 @@ protected:
     _M_start = iterator(__q, 0);
     _M_finish = _M_start + difference_type(__n);
   }
+  
+  // 重要函数 
   void _M_insert_aux(iterator __position, bool __x) {
     if (_M_finish._M_p != _M_end_of_storage) {
       copy_backward(__position, _M_finish, _M_finish + 1);
