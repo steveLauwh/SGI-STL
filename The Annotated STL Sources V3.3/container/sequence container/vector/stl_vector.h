@@ -120,6 +120,7 @@ struct _Vector_base
 #else /* __STL_USE_STD_ALLOCATORS */
 
 // 默认走这里，vector base 构造函数和析构函数
+// vector 继承 _Vector_base
 template <class _Tp, class _Alloc> 
 class _Vector_base {
 public:
@@ -128,6 +129,8 @@ public:
 
   _Vector_base(const _Alloc&)
     : _M_start(0), _M_finish(0), _M_end_of_storage(0) {}
+  
+  // 分配空间 
   _Vector_base(size_t __n, const _Alloc&)
     : _M_start(0), _M_finish(0), _M_end_of_storage(0) 
   {
@@ -305,6 +308,7 @@ public:
   // The range version is a member template, so we dispatch on whether
   // or not the type is an integer.
 
+  // 填充并初始化
   void assign(size_type __n, const _Tp& __val) { _M_fill_assign(__n, __val); }
   void _M_fill_assign(size_type __n, const _Tp& __val);
 
@@ -339,13 +343,14 @@ public:
   reference back() { return *(end() - 1); }
   const_reference back() const { return *(end() - 1); }
 
+  // 尾部插入
   void push_back(const _Tp& __x) {
-    if (_M_finish != _M_end_of_storage) {
-      construct(_M_finish, __x);
-      ++_M_finish;
+    if (_M_finish != _M_end_of_storage) { // 有备用空间
+      construct(_M_finish, __x);    // 构造函数 new操作
+      ++_M_finish;         // 调整
     }
     else
-      _M_insert_aux(end(), __x);
+      _M_insert_aux(end(), __x);  // 无备用空间
   }
   void push_back() {
     if (_M_finish != _M_end_of_storage) {
