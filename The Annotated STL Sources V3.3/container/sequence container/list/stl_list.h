@@ -40,6 +40,7 @@ __STL_BEGIN_NAMESPACE
 #pragma set woff 1375
 #endif
 
+// 双向链表
 struct _List_node_base {
   _List_node_base* _M_next;
   _List_node_base* _M_prev;
@@ -55,7 +56,7 @@ struct _List_iterator_base {
   typedef ptrdiff_t                  difference_type;
   typedef bidirectional_iterator_tag iterator_category;
 
-  _List_node_base* _M_node;
+  _List_node_base* _M_node; // 迭代器内部当然要有一个普通指针，指向 list 的节点
 
   _List_iterator_base(_List_node_base* __x) : _M_node(__x) {}
   _List_iterator_base() {}
@@ -71,6 +72,7 @@ struct _List_iterator_base {
   }
 };  
 
+// list 的迭代器
 template<class _Tp, class _Ref, class _Ptr>
 struct _List_iterator : public _List_iterator_base {
   typedef _List_iterator<_Tp,_Tp&,_Tp*>             iterator;
@@ -239,7 +241,7 @@ protected:
   void _M_put_node(_List_node<_Tp>* __p) { _Alloc_type::deallocate(__p, 1); } 
 
 protected:
-  _List_node<_Tp>* _M_node;
+  _List_node<_Tp>* _M_node;  // 只要一个指针，便可表示整个环状双向链表
 };
 
 #endif /* __STL_USE_STD_ALLOCATORS */
@@ -259,6 +261,7 @@ _List_base<_Tp,_Alloc>::clear()
   _M_node->_M_prev = _M_node;
 }
 
+// 缺省使用 alloc 为配置器
 template <class _Tp, class _Alloc = __STL_DEFAULT_ALLOCATOR(_Tp) >
 class list : protected _List_base<_Tp, _Alloc> {
   // requirements:
