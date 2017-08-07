@@ -409,16 +409,20 @@ public:
   void insert(iterator __position,
               const_iterator __first, const_iterator __last);
 #endif /* __STL_MEMBER_TEMPLATES */
-
+  
+  // 从 pos 位置开始，插入 n 个元素，元素初值为 x
   void insert (iterator __pos, size_type __n, const _Tp& __x)
     { _M_fill_insert(__pos, __n, __x); }
 
   void _M_fill_insert (iterator __pos, size_type __n, const _Tp& __x);
 
+  // 将尾端元素删掉，并调整大小
   void pop_back() {
     --_M_finish;
     destroy(_M_finish);
   }
+  
+  // 清除某个位置上的元素
   iterator erase(iterator __position) {
     if (__position + 1 != end())
       copy(__position + 1, _M_finish, __position);
@@ -426,6 +430,8 @@ public:
     destroy(_M_finish);
     return __position;
   }
+  
+  // 清除 [first, last) 中的所有元素
   iterator erase(iterator __first, iterator __last) {
     iterator __i = copy(__last, _M_finish, __first);
     destroy(__i, _M_finish);
@@ -701,39 +707,44 @@ vector<_Tp, _Alloc>::_M_insert_aux(iterator __position)
   }
 }
 
+// 插入操作
 template <class _Tp, class _Alloc>
 void vector<_Tp, _Alloc>::_M_fill_insert(iterator __position, size_type __n, 
                                          const _Tp& __x)
 {
   if (__n != 0) {
+    // 备用空间大于等于 “新增元素个数”
     if (size_type(_M_end_of_storage - _M_finish) >= __n) {
       _Tp __x_copy = __x;
       const size_type __elems_after = _M_finish - __position;
       iterator __old_finish = _M_finish;
       if (__elems_after > __n) {
+        // "插入点之后的现有元素个数" 大于 "新增元素个数"
         uninitialized_copy(_M_finish - __n, _M_finish, _M_finish);
-        _M_finish += __n;
-        copy_backward(__position, __old_finish - __n, __old_finish);
-        fill(__position, __position + __n, __x_copy);
+        _M_finish += __n; // 将 vector 尾端标记后移
+        copy_backward(__position, __old_finish - __n, __old_finish); // 向后复制
+        fill(__position, __position + __n, __x_copy); // 填充
       }
       else {
-        uninitialized_fill_n(_M_finish, __n - __elems_after, __x_copy);
+        // 当备用空间小于“新增元素个数”
+        uninitialized_fill_n(_M_finish, __n - __elems_after, __x_copy); // 填充 __n - __elems_after 个__x_copy值
         _M_finish += __n - __elems_after;
-        uninitialized_copy(__position, __old_finish, _M_finish);
+        uninitialized_copy(__position, __old_finish, _M_finish);  // 将从 __position 到 __old_finish 的值 复制到 从  _M_finish 开始
         _M_finish += __elems_after;
-        fill(__position, __old_finish, __x_copy);
+        fill(__position, __old_finish, __x_copy); // 填充
       }
     }
     else {
+      // 备用空间 小于 新增元素个数
       const size_type __old_size = size();        
       const size_type __len = __old_size + max(__old_size, __n);
       iterator __new_start = _M_allocate(__len);
       iterator __new_finish = __new_start;
       __STL_TRY {
-        __new_finish = uninitialized_copy(_M_start, __position, __new_start);
-        __new_finish = uninitialized_fill_n(__new_finish, __n, __x);
+        __new_finish = uninitialized_copy(_M_start, __position, __new_start);  // 1
+        __new_finish = uninitialized_fill_n(__new_finish, __n, __x); // 2
         __new_finish
-          = uninitialized_copy(__position, _M_finish, __new_finish);
+          = uninitialized_copy(__position, _M_finish, __new_finish); // 3
       }
       __STL_UNWIND((destroy(__new_start,__new_finish), 
                     _M_deallocate(__new_start,__len)));
