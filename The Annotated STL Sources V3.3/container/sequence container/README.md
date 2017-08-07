@@ -23,11 +23,15 @@ vector 的基本操作
 
 `pop_back`：删除操作(末尾)
 
-`erase`：清除某范围 [first, last) 元素，或删除某个位置上的元素
+`erase`：清除某范围 `[first, last)` 元素，或删除某个位置上的元素
 
 `insert`：从某个位置，插入 n 个元素，元素初值为x
 
 `clear`：清除所有元素
 
+## list
 
+STL list 是一个双向链表，迭代器必须具备前移、后移的能力，所以 list 提供的是 Bidirectional Iterator。
+
+只要刻意在环状链表的尾端加上一个空白节点，便符合 STL 规范之 “前闭后开” 区间。
 
