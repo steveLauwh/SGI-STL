@@ -46,11 +46,13 @@ struct _List_node_base {
   _List_node_base* _M_prev;
 };
 
+// list 节点
 template <class _Tp>
 struct _List_node : public _List_node_base {
   _Tp _M_data;
 };
 
+// List 迭代器基类
 struct _List_iterator_base {
   typedef size_t                     size_type;
   typedef ptrdiff_t                  difference_type;
@@ -201,6 +203,7 @@ public:
           _Base; 
   typedef typename _Base::allocator_type allocator_type;
 
+  // 配置一个节点空间，令 _M_node 指向它，令 _M_node 头尾都指向自己，不设元素值
   _List_base(const allocator_type& __a) : _Base(__a) {
     _M_node = _M_get_node();
     _M_node->_M_next = _M_node;
@@ -216,6 +219,7 @@ public:
 
 #else /* __STL_USE_STD_ALLOCATORS */
 
+// 默认使用
 template <class _Tp, class _Alloc>
 class _List_base 
 {
@@ -236,9 +240,10 @@ public:
   void clear();
 
 protected:
+  // 专属之空间配置器，每次配置一个节点大小
   typedef simple_alloc<_List_node<_Tp>, _Alloc> _Alloc_type;
-  _List_node<_Tp>* _M_get_node() { return _Alloc_type::allocate(1); }
-  void _M_put_node(_List_node<_Tp>* __p) { _Alloc_type::deallocate(__p, 1); } 
+  _List_node<_Tp>* _M_get_node() { return _Alloc_type::allocate(1); } // 配置一个节点并传回
+  void _M_put_node(_List_node<_Tp>* __p) { _Alloc_type::deallocate(__p, 1); }  // 释放一个节点
 
 protected:
   _List_node<_Tp>* _M_node;  // 只要一个指针，便可表示整个环状双向链表
@@ -401,11 +406,12 @@ public:
     { _M_fill_insert(__pos, __n, __x); }
   void _M_fill_insert(iterator __pos, size_type __n, const _Tp& __x); 
 
-  void push_front(const _Tp& __x) { insert(begin(), __x); }
+  void push_front(const _Tp& __x) { insert(begin(), __x); }  // 插入一个节点，作为头结点
   void push_front() {insert(begin());}
-  void push_back(const _Tp& __x) { insert(end(), __x); }
+  void push_back(const _Tp& __x) { insert(end(), __x); } // 插入一个节点，作为尾节点
   void push_back() {insert(end());}
 
+  // 移除迭代器 position 所指节点
   iterator erase(iterator __position) {
     _List_node_base* __next_node = __position._M_node->_M_next;
     _List_node_base* __prev_node = __position._M_node->_M_prev;
@@ -422,7 +428,9 @@ public:
   void resize(size_type __new_size, const _Tp& __x);
   void resize(size_type __new_size) { this->resize(__new_size, _Tp()); }
 
+  // 移除头节点
   void pop_front() { erase(begin()); }
+  // 移除尾节点
   void pop_back() { 
     iterator __tmp = end();
     erase(--__tmp);
@@ -493,6 +501,7 @@ public:
 #endif /* __STL_MEMBER_TEMPLATES */
 
 protected:
+  // 将 [first, last) 内的所有元素移动到 position 之前
   void transfer(iterator __position, iterator __first, iterator __last) {
     if (__position != __last) {
       // Remove [first, last) from its old position.
@@ -509,16 +518,21 @@ protected:
   }
 
 public:
+  // 将 __x 接合于 position 所指位置之前，__x 必须不同于 *this
   void splice(iterator __position, list& __x) {
     if (!__x.empty()) 
       this->transfer(__position, __x.begin(), __x.end());
   }
+  
+  // 将 i 所指元素接合于 __position 所指位置之前，__position 和 i 可指向同一个 list
   void splice(iterator __position, list&, iterator __i) {
     iterator __j = __i;
     ++__j;
     if (__position == __i || __position == __j) return;
     this->transfer(__position, __i, __j);
   }
+  
+  // 将 [first, last) 内所有元素接合于 __position 所指位置之前
   void splice(iterator __position, list&, iterator __first, iterator __last) {
     if (__first != __last) 
       this->transfer(__position, __first, __last);
@@ -710,6 +724,7 @@ list<_Tp, _Alloc>::_M_assign_dispatch(_InputIter __first2, _InputIter __last2,
 
 #endif /* __STL_MEMBER_TEMPLATES */
 
+// 将数值 __value 移除
 template <class _Tp, class _Alloc>
 void list<_Tp, _Alloc>::remove(const _Tp& __value)
 {
@@ -723,6 +738,7 @@ void list<_Tp, _Alloc>::remove(const _Tp& __value)
   }
 }
 
+// 移除数值相同的连续元素。
 template <class _Tp, class _Alloc>
 void list<_Tp, _Alloc>::unique()
 {
@@ -735,10 +751,11 @@ void list<_Tp, _Alloc>::unique()
       erase(__next);
     else
       __first = __next;
-    __next = __first;
+    __next = __first;   // 修正区段范围
   }
 }
 
+// 将 __x 合并到 *this 身上，两个 list 的内容都已经经过递增排序，最终合并后是一个递增排序链表
 template <class _Tp, class _Alloc>
 void list<_Tp, _Alloc>::merge(list<_Tp, _Alloc>& __x)
 {
@@ -766,12 +783,14 @@ inline void __List_base_reverse(_List_node_base* __p)
   } while (__tmp != __p);
 }
 
+// 将 *this 的内容逆向倒置
 template <class _Tp, class _Alloc>
 inline void list<_Tp, _Alloc>::reverse() 
 {
   __List_base_reverse(this->_M_node);
 }    
 
+// quick sort
 template <class _Tp, class _Alloc>
 void list<_Tp, _Alloc>::sort()
 {
