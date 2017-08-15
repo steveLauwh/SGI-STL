@@ -41,7 +41,13 @@ vector<Shape>::iterator svite; // svite 的类型就是 Shape*
 
 **list 的元素操作：**
 
+`push_front`：插入一个节点，作为头节点
+
 `push_back`：将新元素插入到 list 尾端
+
+`pop_front`：移除头节点
+
+`pop_back`：移除尾节点
 
 `insert`：插入是指 插入在...之前，插入完成后，新节点将位于标示出插入点所指之节点的前方。
 
@@ -51,10 +57,47 @@ vector<Shape>::iterator svite; // svite 的类型就是 Shape*
 * deque 和 vector 的差异：第一，deque 允许于常数时间内对起头端进行元素的插入或移除操作；第二，deque 没有容量，它是动态地以分段连续空间组合而成。
 * deque 由一段段的定量连续空间构成。一旦有必要在 deque 的前端或尾端增加新空间，便配置一段定量连续空间，串接在整个 deque 的头端或尾端。
 * deque 实现复杂，其复杂的迭代器架构。
+* 在 deque 的以前版本中，还有一个额外的模板参数，以便用户可以控制节点的大小。 这种扩展证明是违反 C++ 标准（可以使用模板模板参数检测到），并且已被删除。
 
-在 deque 的以前版本中，还有一个额外的模板参数，以便用户可以控制节点的大小。 这种扩展证明是违反 C++ 标准（可以使用模板模板参数检测到），并且已被删除。
+> deque 的中控器 `map`
 
 deque 采用一块所谓的 map 作为主控。这个 map 是一小块连续空间，其中每个节点都是指针，指向另一段连续线性空间，称为缓冲区。
 
+> deque 的迭代器 `_Deque_iterator`
 
+deque 是分段连续空间，维持其“整体连续”假象的任务。
+
+迭代器包含 cur 指向缓冲区的当前元素，first 指向缓冲区的头，last 指向缓冲区的尾，node 指向中控器某一个 node 节点。
+
+`push_back`：尾端插入
+
+`push_front`：前端插入
+
+`pop_back`：尾端取出
+
+`pop_front`：前端取出
+
+## stack
+
+stack 是一种先进后出的数据结构。它只有一个出口。
+
+SGI STL 默认是以 deque 作为缺省情况下的 stack 底部结构，也可以 list 作为 stack 的底层容器。
+
+STL stack 往往不被归类为 container(容器)，而被归类为 container adapter。
+
+`push`：顶部进
+
+`pop`：顶部出
+
+`top`：指向顶部
+
+## queue
+
+queue 是一种先进先出的数据结构。从最底端加入元素，从最顶端取出元素。
+
+SGI STL 默认是以 deque 作为缺省情况下的 queue 底部结构。
+
+STL queue 往往不被归类为 container(容器)，而被归类为 container adapter。
+
+## heap
 
