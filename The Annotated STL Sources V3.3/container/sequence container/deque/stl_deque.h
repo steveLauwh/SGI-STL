@@ -424,6 +424,7 @@ _Deque_base<_Tp,_Alloc>::_M_destroy_nodes(_Tp** __nstart, _Tp** __nfinish)
     _M_deallocate_node(*__n);
 }
 
+// deque 结构
 template <class _Tp, class _Alloc = __STL_DEFAULT_ALLOCATOR(_Tp) >
 class deque : protected _Deque_base<_Tp, _Alloc> {
 
