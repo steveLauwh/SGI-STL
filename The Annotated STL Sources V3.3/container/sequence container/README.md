@@ -24,15 +24,15 @@ vector<Shape>::iterator svite; // svite 的类型就是 Shape*
 
 **vector 的基本操作：**
 
-`push_back`：插入操作(末尾)
+`push_back()`：插入操作(末尾)
 
-`pop_back`：删除操作(末尾)
+`pop_back()`：删除操作(末尾)
 
-`erase`：清除某范围 `[first, last)` 元素，或删除某个位置上的元素
+`erase()`：清除某范围 `[first, last)` 元素，或删除某个位置上的元素
 
-`insert`：从某个位置，插入 n 个元素，元素初值为x
+`insert()`：从某个位置，插入 n 个元素，元素初值为x
 
-`clear`：清除所有元素
+`clear()`：清除所有元素
 
 ## list
 
@@ -41,15 +41,15 @@ vector<Shape>::iterator svite; // svite 的类型就是 Shape*
 
 **list 的元素操作：**
 
-`push_front`：插入一个节点，作为头节点
+`push_front()`：插入一个节点，作为头节点
 
-`push_back`：将新元素插入到 list 尾端
+`push_back()`：将新元素插入到 list 尾端
 
-`pop_front`：移除头节点
+`pop_front()`：移除头节点
 
-`pop_back`：移除尾节点
+`pop_back()`：移除尾节点
 
-`insert`：插入是指 插入在...之前，插入完成后，新节点将位于标示出插入点所指之节点的前方。
+`insert()`：插入是指 插入在...之前，插入完成后，新节点将位于标示出插入点所指之节点的前方。
 
 ## deque
 
@@ -69,13 +69,13 @@ deque 是分段连续空间，维持其“整体连续”假象的任务。
 
 迭代器包含 cur 指向缓冲区的当前元素，first 指向缓冲区的头，last 指向缓冲区的尾，node 指向中控器某一个 node 节点。
 
-`push_back`：尾端插入
+`push_back()`：尾端插入
 
-`push_front`：前端插入
+`push_front()`：前端插入
 
-`pop_back`：尾端取出
+`pop_back()`：尾端取出
 
-`pop_front`：前端取出
+`pop_front()`：前端取出
 
 ## stack
 
@@ -85,11 +85,11 @@ SGI STL 默认是以 deque 作为缺省情况下的 stack 底部结构，也可�
 
 STL stack 往往不被归类为 container(容器)，而被归类为 container adapter。
 
-`push`：顶部进
+`push()`：顶部进
 
-`pop`：顶部出
+`pop()`：顶部出
 
-`top`：指向顶部
+`top()`：指向顶部
 
 ## queue
 
@@ -100,4 +100,47 @@ SGI STL 默认是以 deque 作为缺省情况下的 queue 底部结构。
 STL queue 往往不被归类为 container(容器)，而被归类为 container adapter。
 
 ## heap
+
+二叉搜索树的输入需要足够的随机性。
+
+binary max heap 作为 priority queue 的底层机制。
+
+STL 提供的是 max-heap。
+
+`push_heap()`：入堆，新元素插入到容器 vector 底部，然后做 shift up 操作保证满足 max-heap 条件。
+
+`pop_heap()`：取出根节点，然后做 shift down 操作保证满足 max-heap 条件， 最大元素只是被置放到底部容器的最尾端。
+
+`sort_heap()`：内部实现是调用 pop_heap 函数。
+
+`make_heap()`：用来将一段现有的数据转化为一个 heap。
+
+## priority_queue
+
+priority_queue 是一个拥有权值观念的 queue。
+
+默认情况下以 vector 为底部容器完成其所有工作，再加上 heap 处理规则。
+
+`priority_queue()`：调用 make_heap()， 使进入的元素后，始终保持一个堆。
+
+`top()`：队顶元素。
+
+`push()`：尾端插入元素，然后调用 push_heap() 重排堆。
+
+`pop()`：用 pop_heap() 将最大元素放到底部容器的最尾端，并不是真正弹出，再调用底部容器 vector 所提供的 pop_back() 弹出元素。
+
+## slist
+
+STL slist 是一个单向链表。
+
+迭代器属于单向的 Forward Iterator。
+
+插入操作会将新元素插入到指定位置之前，而非之后。
+
+`push_front()`：从头部插入元素
+
+`pop_front()`：从头部取出元素
+
+`front()`：取头部元素
+
 
