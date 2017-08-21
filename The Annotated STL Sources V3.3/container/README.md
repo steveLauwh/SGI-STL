@@ -33,3 +33,5 @@ ordered 是容器集合被排序，可以使用指定的顺序去遍历集合。
 * hash_multiset (内含一个 hashtable)  (非标准)
 * hash_multimap (内含一个 hashtable)  (非标准)
 
+熟悉关联式容器前，需要有 [RB-tree](https://github.com/steveLauwh/Data-Structures-And-Algorithms/tree/master/Tree/RB-tree)(红黑树原理) 和 [hash table](https://github.com/steveLauwh/Data-Structures-And-Algorithms/tree/master/Hash%20Table)(哈希表原理) 基础。
+
