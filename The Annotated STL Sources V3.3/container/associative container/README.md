@@ -23,8 +23,11 @@ hash table 的迭代器没有后退操作，也没有逆向迭代器。
 **hash table 的 API**
 
 `insert_unique(): 插入元素，不允许重复`
+
 `insert_equal(): 插入元素，允许重复`
+
 `find(): 查找元素`
+
 `resize(): 调整表格`
 
 SGI hashtable 的 hash function 无法处理 string， double， float 等类型的元素。
