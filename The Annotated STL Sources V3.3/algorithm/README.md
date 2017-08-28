@@ -1,10 +1,10 @@
 ## 算法(algorithm)
 
-算法：各种常用算法如 sort，search，copy，erase等，从实现的角度来看，STL 算法是一种 function template。
+算法：各种常用算法如 sort，search，copy，erase 等，从实现的角度来看，STL 算法是一种 function template。
 
 所有泛型算法的前两个参数都是一对迭代器，STL 习惯使用前闭后开的区间，`[first, last)`。
 
-最后一个元素的下一位置，称为 end。
+最后一个元素的下一位置，称为 end()。
 
 数值的传递由 pass-by-value 改为 pass-by-reference，好处是，在模板中，参数的类型可以任意，当对象一大，传递成本便会上升，所以用 pass-by-reference 可以节省空间。
 
@@ -56,7 +56,7 @@ STL 将数值算法的内部实现放在 <stl_numeric.h> 中，用户调用数�
 
 将两个 Forwarditerators 所指的对象对调。
 
-> **以字典顺序进行比较 lexicographical_compare**
+> **以字典顺序进行比较 `lexicographical_compare`**
 
 以 "字典排列方式" 对两个序列 `[first1, last1)` 和 `[first2, last2)` 进行比较。
 
@@ -84,7 +84,7 @@ STL 将数值算法的内部实现放在 <stl_numeric.h> 中，用户调用数�
 
 将 `[first, last)` 区间内的每一个元素，以逆行的方向复制到以 `result-1` 为起点，方向亦为逆行的区间上。
 
-> **`set` 相关算法**
+### set 相关算法
 
 * 并集 `set_union`
 
@@ -181,7 +181,7 @@ S1 和 S2 必须是有序集合，其中的元素可以重复，判断 S1 是否
 
 移除 `[first, last)` 之中所有与 value 相等的元素，这一算法并不真正从容器中删除那些元素，而是将每一个不与 value 相等的元素轮番赋值给 first 之后的空间。
 
-> **移除某类元素并将结果复制到另一容器`remove_copy`**
+> **移除某类元素并将结果复制到另一容器 `remove_copy`**
 
 移除 `[first, last)` 之中所有与 value 相等的元素。它并不真正从容器中删除那些元素，而是将结果复制到一个以 result 标示起始位置的容器身上。
 
