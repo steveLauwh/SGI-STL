@@ -249,4 +249,103 @@ transform() 两个版本都执行结果放进迭代器 result 所标示的容器
 
 算法 unique_copy 可从 `[first, last)` 中将元素复制到以 result 开头的区间上。
 
+> **lower_bound (应用于有序区间)**
 
+二分查找，在已排序的 `[first, last)` 中的寻找元素 value，返回位置。
+
+> **upper_bound (应用于有序空间)**
+
+二分查找，在已排序的 `[first, last)` 中的寻找元素 value，与 `lower_bound` 区别是返回查找值的位置。
+
+> **二分查找 `binary_search (应用于有序空间)`**
+
+二分查找法，在已排序的 `[first, last)` 中的寻找元素 value，查找到，返回 true，否则 false。
+
+> **求下一个排列组合 `next_permutation`**
+
+`next_permutation()` 获取 `[first, last)` 所标示之序列的下一个排列组合。
+
+实现原理：
+
+在当前序列中，从尾端往前寻找两个相邻元素，前一个记为 `*i`，后一个记为 `*ii`，并且满足 `*i < *ii`。然后再从尾端寻找另一个元素 `*j`，如果满足 `*i < *j`，即将第 i 个元素与第 j 个元素对调，并将第 ii 个元素之后（包括ii）的所有元素颠倒排序，即求出下一个序列了。
+
+> **求上一个排列组合 `prev_permutation`**
+
+`prev_permutation()` 获取 `[first, last)` 所标示之序列的上一个排列组合。
+
+实现原理：
+
+在当前序列中，从尾端往前寻找两个相邻元素，前一个记为 `*i`，后一个记为 `*ii`，并且满足 `*i > *ii`。然后再从尾端寻找另一个元素 `*j`，如果满足 `*i > *j`，即将第 i 个元素与第 j 个元素对调，并将第 ii 个元素之后（包括ii）的所有元素颠倒排序，即求出上一个序列了。
+
+> **随机重排元素 `random-shuffle`**
+
+这个算法将 `[first, last)` 的元素次序随机重排, 在 N！种可能的元素排列顺序中随机选出一种，此处 N 为 last-first。
+
+> **局部排序 `partial_sort/partial_sort_copy`**
+
+本算法接受一个 middle 迭代器(位于序列 `[first, last) 之内`)，然后重新安排 `[first, last)`，使序列中的 middle-first 个最小元素以递增顺序排序，置于 `[first, middle)`内。其余 `last-middle` 个元素安置于 `[middle, last)` 中，不保证有任何特定顺序。
+
+> **排序算法 sort**
+
+STL 的 sort 算法，数据量大时采用 Quick Sort，分段递归排序，当数据量小于某个门槛(5-20)，就改用 Insertion Sort。
+
+**Insertion Sort**
+
+插入排序是以双层循环的形式进行。时间复杂度为 O(N^2)。
+
+将一个记录插入到已排序好的有序表中，从而得到一个新，记录数增1的有序表。即：先将序列的第1个记录看成是一个有序的子序列，然后从第2个记录逐个进行插入，直至整个序列有序为止。
+
+**Quick Sort**
+
+平均时间复杂度为 O(NlogN)，最坏情况下将达 O(N^2)。
+
+STL 早期采用 Quick Sort，现在 SGI STL 改用 IntroSort(极类似 median-of-three QuickSort 的一种排序算法)。
+
+递归
+
+Median-of-Three(三点中值) 中间值
+
+Partitioning 分割
+
+**SGI STL sort**
+
+混合式排序算法，Introspective Sorting，当做 Partitioning 操作，有恶化为二次行为的倾向时，改用 Heap Sort，使其效率维持在 Heap Sort 的 O(NlogN)。
+
+用 __lg() 控制分割恶化的情况：
+
+```cpp
+// 找出 2^k <= n 的最大值 k
+template <class size>
+inline Size __lg(Size n) {
+    Size k;
+    for (k = 0; n > 1; n >>= 1)
+        ++k;
+        
+    return k;
+}
+```
+最多允许分割 2k 层；
+
+混合式排序思想：
+
+* 先判断序列大小，当大于阈值 `__stl_threshold(16)`，再检查分割层次，如果分割层次超过指定值 0，就改用 Heap Sort完成；
+* 在大于阈值 `__stl_threshold(16)`，分割层次不为 0，就继续使用 Quick Sort；
+* 如果小于阈值，则用插入排序；
+
+> **equal_range(应用于有序区间)**
+
+算法 `equal_range` 是二分查找法的一个版本，试图在已排序的 `[first, last)` 中寻找 value。
+
+返回一个上下区间。
+
+> **inplace_merge(应用于有序区间)**
+
+合并 并且 就地排序
+
+> **nth_element**
+
+使第 n 大元素处于第 n 位置（从0开始,其位置是下标为 n的元素），并且比这个元素小的元素都排在这个元素之前，比这个元素大的元素都排在这个元素之后，但不能保证他们是有序的。
+
+> **归并排序 merge sort**
+
+Merge Sort 的复杂度为 O(NlogN)。需要借用额外的内存。底层是调用 `inplace_merge` 实现。
