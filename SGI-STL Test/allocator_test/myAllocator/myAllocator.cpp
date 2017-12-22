@@ -4,7 +4,7 @@
 
 using namespace std;
 
-// allocator test
+// myAllocator test
 int main()
 {
 	int arr[5] = {0, 1, 2, 3, 4};
