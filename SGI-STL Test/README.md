@@ -9,6 +9,8 @@ SGI STL 六大组件的代码测试
 * [仿函数(functor)-Test](https://github.com/steveLauwh/SGI-STL/tree/master/SGI-STL%20Test/functor_test)
 * [配接器(adapter)-Test](https://github.com/steveLauwh/SGI-STL/tree/master/SGI-STL%20Test/adapter_test)
 
+在 gcc version 4.8.4 下编译
+
 ## 参考
 
 * [C++ reference](http://en.cppreference.com/w/)
