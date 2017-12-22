@@ -93,7 +93,7 @@ namespace myAllocator
 			return (const_pointer)&x;
 		}
 		
-		// 返回可成功分配的最大量
+		// 返回可成功分配的最大量 
 		size_type max_size() const {  
 			return size_type(UINT_MAX/sizeof(T)); // UINT_MAX 是 unsigned long 及 unsigned long long 的最大值
 		}
