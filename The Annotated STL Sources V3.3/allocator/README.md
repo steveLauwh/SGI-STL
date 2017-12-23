@@ -60,7 +60,7 @@ union _Obj {
     union _Obj* _M_free_list_link;  // 利用联合体特点
     char _M_client_data[1];    /* The client sees this. */
 };
-static _Obj* __STL_VOLATILE _S_free_list[_NFREELISTS];
+static _Obj* __STL_VOLATILE _S_free_list[_NFREELISTS];  // 注意，它是数组，每个数组元素包含若干相等的小额区块
  ```
 
 其中 free-list 是指针数组，16 个数组元素，就是 16 个 free-list，各自管理大小分别为 8， 16， 24， 32，...128 bytes(8 的倍数)的小额区块。
