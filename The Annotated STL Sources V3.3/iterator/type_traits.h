@@ -56,6 +56,7 @@ struct __true_type {
 struct __false_type {
 };
 
+// trivial 平凡
 template <class _Tp>
 struct __type_traits { 
    typedef __true_type     this_dummy_member_must_be_first;
