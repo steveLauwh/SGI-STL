@@ -81,9 +81,18 @@ typename iterator_traits<I>::difference_type cout(I first, I last, const T& valu
 
 * 迭代器相应类型之五：iterator_category
 
-traits 本质是什么？
+  + 输入迭代器 (InputIterator) 是能从所指向元素读取的迭代器 (Iterator) 。输入迭代器 (InputIterator) 仅保证单趟算法的合法性。
+  + 输出迭代器 (OutputIterator) 是能写入所指元素的迭代器 (Iterator) 。
+  + 向前迭代器 (ForwardIterator) 是一种能从所指向元素读取数据的迭代器 (Iterator) 。
+  + 双向迭代器 (BidirectionalIterator) 是能双向移动（即自增与自减）的向前迭代器 (ForwardIterator) 。
+  + 随机访问迭代器 (RandomAccessIterator) 是能在常数时间内移动到指向任何元素的双向迭代器 (BidirectionalIterator) 。
+
+## 总结
+
+traits 本质是什么？  
 
 多一层间接性，换来灵活性。
 
------
 iterator_traits 负责萃取迭代器的特性，__type_traits 负责萃取类型的特性。
+
+
