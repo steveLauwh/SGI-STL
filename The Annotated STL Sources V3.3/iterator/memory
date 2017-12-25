@@ -36,6 +36,7 @@ template<class _Tp1> struct auto_ptr_ref {
 #endif
 
 // 智能指针 smart pointer
+// auto_ptr 在 C++ 11 被弃用，在 C++ 17 被移除
 template <class _Tp> class auto_ptr {
 private:
   _Tp* _M_ptr;
