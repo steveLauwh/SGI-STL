@@ -3,6 +3,9 @@
 
 using namespace std;
 
+/**
+ * vector 的操作
+ */
 template <typename T>
 void printVector(const vector<T>& vec)
 {
