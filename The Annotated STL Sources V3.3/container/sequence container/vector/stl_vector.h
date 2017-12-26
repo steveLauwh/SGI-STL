@@ -49,6 +49,7 @@ __STL_BEGIN_NAMESPACE
 #ifdef __STL_USE_STD_ALLOCATORS
 
 // Base class for ordinary allocators.
+// 普通配置器的基类
 template <class _Tp, class _Allocator, bool _IsStatic>
 class _Vector_alloc_base {
 public:
@@ -126,11 +127,12 @@ class _Vector_base {
 public:
   typedef _Alloc allocator_type;
   allocator_type get_allocator() const { return allocator_type(); }
-
+  
+  // 初始化
   _Vector_base(const _Alloc&)
     : _M_start(0), _M_finish(0), _M_end_of_storage(0) {}
   
-  // 分配空间 
+  // 初始化，分配空间 
   _Vector_base(size_t __n, const _Alloc&)
     : _M_start(0), _M_finish(0), _M_end_of_storage(0) 
   {
@@ -138,7 +140,8 @@ public:
     _M_finish = _M_start;
     _M_end_of_storage = _M_start + __n;
   }
-
+  
+  // 释放空间
   ~_Vector_base() { _M_deallocate(_M_start, _M_end_of_storage - _M_start); }
 
 protected:
@@ -179,7 +182,7 @@ public:
   typedef ptrdiff_t difference_type;
 
   typedef typename _Base::allocator_type allocator_type;
-  allocator_type get_allocator() const { return _Base::get_allocator(); }
+  allocator_type get_allocator() const { return _Base::get_allocator(); }  // 返回相关的配置器 
 
 #ifdef __STL_CLASS_PARTIAL_SPECIALIZATION
   typedef reverse_iterator<const_iterator> const_reverse_iterator;
@@ -204,31 +207,32 @@ protected:
   void _M_insert_aux(iterator __position, const _Tp& __x);
   void _M_insert_aux(iterator __position);
 
-public:
-  iterator begin() { return _M_start; }
+public: // vector 操作函数的实现
+  iterator begin() { return _M_start; }   // 返回指向容器第一个元素的迭代器 
   const_iterator begin() const { return _M_start; }
-  iterator end() { return _M_finish; }
+  iterator end() { return _M_finish; }    // 返回指向容器尾端的迭代器 
   const_iterator end() const { return _M_finish; }
-
+  
+  // 返回一个指向容器最后一个元素的反向迭代器 
   reverse_iterator rbegin()
     { return reverse_iterator(end()); }
   const_reverse_iterator rbegin() const
     { return const_reverse_iterator(end()); }
-  reverse_iterator rend()
+  reverse_iterator rend()  // 返回一个指向容器首部的反向迭代器
     { return reverse_iterator(begin()); }
   const_reverse_iterator rend() const
     { return const_reverse_iterator(begin()); }
 
-  size_type size() const
+  size_type size() const  // 返回容纳的元素数 
     { return size_type(end() - begin()); }
-  size_type max_size() const
+  size_type max_size() const  // 返回可容纳的最大元素数 
     { return size_type(-1) / sizeof(_Tp); }
-  size_type capacity() const
+  size_type capacity() const  // vector 的容量
     { return size_type(_M_end_of_storage - begin()); }
-  bool empty() const
+  bool empty() const   // 检查容器是否为空 
     { return begin() == end(); }
 
-  reference operator[](size_type __n) { return *(begin() + __n); }
+  reference operator[](size_type __n) { return *(begin() + __n); }  // 重载 []，访问指定的元素 
   const_reference operator[](size_type __n) const { return *(begin() + __n); }
 
 #ifdef __STL_THROW_RANGE_ERRORS
@@ -237,7 +241,7 @@ public:
       __stl_throw_range_error("vector");
   }
 
-  reference at(size_type __n)
+  reference at(size_type __n)  // 访问指定的元素，同时进行越界检查
     { _M_range_check(__n); return (*this)[__n]; }
   const_reference at(size_type __n) const
     { _M_range_check(__n); return (*this)[__n]; }
@@ -246,6 +250,7 @@ public:
   explicit vector(const allocator_type& __a = allocator_type())
     : _Base(__a) {}
 
+  // 构造拥有 n 个有值 value 的元素的容器
   vector(size_type __n, const _Tp& __value,
          const allocator_type& __a = allocator_type()) 
     : _Base(__n, __a)
@@ -254,13 +259,15 @@ public:
   explicit vector(size_type __n)
     : _Base(__n, allocator_type())
     { _M_finish = uninitialized_fill_n(_M_start, __n, _Tp()); }
-
+  
+  // 拷贝构造，构造拥有 __x 内容的容器
   vector(const vector<_Tp, _Alloc>& __x) 
     : _Base(__x.size(), __x.get_allocator())
     { _M_finish = uninitialized_copy(__x.begin(), __x.end(), _M_start); }
 
 #ifdef __STL_MEMBER_TEMPLATES
   // Check whether it's an integral type.  If so, it's not an iterator.
+  // 构造拥有范围 [first, last) 内容的容器。
   template <class _InputIterator>
   vector(_InputIterator __first, _InputIterator __last,
          const allocator_type& __a = allocator_type()) : _Base(__a) {
@@ -291,6 +298,7 @@ public:
   ~vector() { destroy(_M_start, _M_finish); }
 
   vector<_Tp, _Alloc>& operator=(const vector<_Tp, _Alloc>& __x);
+  // 预留存储空间，若 __n 大于当前的 capacity() ，则分配新存储，否则该方法不做任何事。
   void reserve(size_type __n) {
     if (capacity() < __n) {
       const size_type __old_size = size();
@@ -308,7 +316,7 @@ public:
   // The range version is a member template, so we dispatch on whether
   // or not the type is an integer.
 
-  // 填充并初始化
+  // 填充并初始化，以 __n 份 __val 的副本替换内容。
   void assign(size_type __n, const _Tp& __val) { _M_fill_assign(__n, __val); }
   void _M_fill_assign(size_type __n, const _Tp& __val);
 
@@ -338,19 +346,20 @@ public:
 
 #endif /* __STL_MEMBER_TEMPLATES */
 
+  // 访问第一个元素
   reference front() { return *begin(); }
   const_reference front() const { return *begin(); }
-  reference back() { return *(end() - 1); }
+  reference back() { return *(end() - 1); } // 访问最后一个元素
   const_reference back() const { return *(end() - 1); }
 
   // 尾部插入
   void push_back(const _Tp& __x) {
     if (_M_finish != _M_end_of_storage) { // 有备用空间
-      construct(_M_finish, __x);    // 构造函数 new操作
+      construct(_M_finish, __x);    // 全局函数，将 __x 设定到 _M_finish 指针所指的空间上
       ++_M_finish;         // 调整
     }
     else
-      _M_insert_aux(end(), __x);  // 无备用空间
+      _M_insert_aux(end(), __x);  // 无备用空间，从新分配再插入
   }
   void push_back() {
     if (_M_finish != _M_end_of_storage) {
@@ -360,12 +369,14 @@ public:
     else
       _M_insert_aux(end());
   }
+  // 交换内容
   void swap(vector<_Tp, _Alloc>& __x) {
     __STD::swap(_M_start, __x._M_start);
     __STD::swap(_M_finish, __x._M_finish);
     __STD::swap(_M_end_of_storage, __x._M_end_of_storage);
   }
 
+  // 在 __position 前插入 __x 
   iterator insert(iterator __position, const _Tp& __x) {
     size_type __n = __position - begin();
     if (_M_finish != _M_end_of_storage && __position == end()) {
@@ -425,7 +436,7 @@ public:
   // 清除某个位置上的元素
   iterator erase(iterator __position) {
     if (__position + 1 != end())
-      copy(__position + 1, _M_finish, __position);
+      copy(__position + 1, _M_finish, __position); // 全局函数
     --_M_finish;
     destroy(_M_finish);
     return __position;
@@ -439,6 +450,7 @@ public:
     return __first;
   }
 
+  // 改变容器中可存储元素的个数 
   void resize(size_type __new_size, const _Tp& __x) {
     if (__new_size < size()) 
       erase(begin() + __new_size, end());
@@ -510,6 +522,7 @@ protected:
 #endif /* __STL_MEMBER_TEMPLATES */
 };
 
+// 比较两个 vector 内容是否相等
 template <class _Tp, class _Alloc>
 inline bool 
 operator==(const vector<_Tp, _Alloc>& __x, const vector<_Tp, _Alloc>& __y)
@@ -518,6 +531,7 @@ operator==(const vector<_Tp, _Alloc>& __x, const vector<_Tp, _Alloc>& __y)
          equal(__x.begin(), __x.end(), __y.begin());
 }
 
+//  按字典序比较 __x 与 __y 的内容
 template <class _Tp, class _Alloc>
 inline bool 
 operator<(const vector<_Tp, _Alloc>& __x, const vector<_Tp, _Alloc>& __y)
@@ -560,6 +574,7 @@ operator>=(const vector<_Tp, _Alloc>& __x, const vector<_Tp, _Alloc>& __y) {
 
 #endif /* __STL_FUNCTION_TMPL_PARTIAL_ORDER */
 
+// 重载赋值运算符
 template <class _Tp, class _Alloc>
 vector<_Tp,_Alloc>& 
 vector<_Tp,_Alloc>::operator=(const vector<_Tp, _Alloc>& __x)
@@ -644,6 +659,7 @@ vector<_Tp, _Alloc>::_M_assign_aux(_ForwardIter __first, _ForwardIter __last,
 
 #endif /* __STL_MEMBER_TEMPLATES */
 
+// push_back 调用, insert(position, x)调用
 template <class _Tp, class _Alloc>
 void 
 vector<_Tp, _Alloc>::_M_insert_aux(iterator __position, const _Tp& __x)
@@ -655,7 +671,7 @@ vector<_Tp, _Alloc>::_M_insert_aux(iterator __position, const _Tp& __x)
     copy_backward(__position, _M_finish - 2, _M_finish - 1);
     *__position = __x_copy;
   }
-  else {
+  else {// 没有备用空间
     const size_type __old_size = size();
     const size_type __len = __old_size != 0 ? 2 * __old_size : 1;
     iterator __new_start = _M_allocate(__len);
@@ -707,7 +723,7 @@ vector<_Tp, _Alloc>::_M_insert_aux(iterator __position)
   }
 }
 
-// 插入操作
+// insert(position, n, x) 调用
 template <class _Tp, class _Alloc>
 void vector<_Tp, _Alloc>::_M_fill_insert(iterator __position, size_type __n, 
                                          const _Tp& __x)
@@ -758,7 +774,7 @@ void vector<_Tp, _Alloc>::_M_fill_insert(iterator __position, size_type __n,
 }
 
 #ifdef __STL_MEMBER_TEMPLATES
-
+// insert(pos, first, last) 调用
 template <class _Tp, class _Alloc> template <class _InputIterator>
 void 
 vector<_Tp, _Alloc>::_M_range_insert(iterator __pos, 
