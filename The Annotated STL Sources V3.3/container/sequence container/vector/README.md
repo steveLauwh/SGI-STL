@@ -71,5 +71,29 @@ void uninitialized_fill( ForwardIt first, ForwardIt last, const T& value );
 * first, last	-	要初始化的元素的范围
 * value	-	构造元素所用的值
 
+#### copy 功能
 
+```cpp
+template< class InputIt, class OutputIt >
+OutputIt copy( InputIt first, InputIt last, OutputIt d_first );
+```
+函数的功能：复制 `[first, last)` 所定义的范围中的元素到始于 d_first 的另一范围。
 
+函数的参数：
+
+* first, last	-	要复制的元素范围
+* d_first	-	目标范围的起始
+
+#### vector insert 形式
+
+```cpp
+// 在 pos 前插入 value，底层实现 _M_insert_aux
+iterator insert( iterator pos, const T& value );
+
+// 在 pos 前插入 value 的 count 个副本，底层实现 _M_fill_insert
+void insert( iterator pos, size_type count, const T& value );
+
+// 在 pos 前插入来自范围 `[first, last)` 的元素，底层实现 _M_range_insert
+template< class InputIt >
+void insert( iterator pos, InputIt first, InputIt last);
+```
