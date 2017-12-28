@@ -1,7 +1,0 @@
-# top-most EditorConfig file
-root = true
-
-# all files
-[*]
-indent_style = tab
-indent_size = 4
