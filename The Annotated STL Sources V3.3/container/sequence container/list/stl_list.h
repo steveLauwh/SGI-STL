@@ -49,23 +49,24 @@ struct _List_node_base {
 // list 节点
 template <class _Tp>
 struct _List_node : public _List_node_base {
-  _Tp _M_data;
+  _Tp _M_data; // 节点存储的值
 };
 
 // List 迭代器基类
 struct _List_iterator_base {
   typedef size_t                     size_type;
   typedef ptrdiff_t                  difference_type;
-  typedef bidirectional_iterator_tag iterator_category;
+  typedef bidirectional_iterator_tag iterator_category;  // 双向移动迭代器
 
   _List_node_base* _M_node; // 迭代器内部当然要有一个普通指针，指向 list 的节点
 
   _List_iterator_base(_List_node_base* __x) : _M_node(__x) {}
   _List_iterator_base() {}
 
-  void _M_incr() { _M_node = _M_node->_M_next; }
-  void _M_decr() { _M_node = _M_node->_M_prev; }
+  void _M_incr() { _M_node = _M_node->_M_next; }  // 前驱
+  void _M_decr() { _M_node = _M_node->_M_prev; }  // 后继
 
+  // 比较两个容器操作
   bool operator==(const _List_iterator_base& __x) const {
     return _M_node == __x._M_node;
   }
@@ -90,25 +91,30 @@ struct _List_iterator : public _List_iterator_base {
   _List_iterator() {}
   _List_iterator(const iterator& __x) : _List_iterator_base(__x._M_node) {}
 
+  // 重载 *，返回链表节点的值
   reference operator*() const { return ((_Node*) _M_node)->_M_data; }
 
 #ifndef __SGI_STL_NO_ARROW_OPERATOR
   pointer operator->() const { return &(operator*()); }
 #endif /* __SGI_STL_NO_ARROW_OPERATOR */
 
+  // 迭代器先前进一个节点
   _Self& operator++() { 
     this->_M_incr();
     return *this;
   }
+  // 迭代器后增
   _Self operator++(int) { 
     _Self __tmp = *this;
     this->_M_incr();
     return __tmp;
   }
+  // 迭代器先后退一个节点
   _Self& operator--() { 
     this->_M_decr();
     return *this;
   }
+  // 迭代器后减
   _Self operator--(int) { 
     _Self __tmp = *this;
     this->_M_decr();
@@ -246,7 +252,7 @@ protected:
   void _M_put_node(_List_node<_Tp>* __p) { _Alloc_type::deallocate(__p, 1); }  // 释放一个节点
 
 protected:
-  _List_node<_Tp>* _M_node;  // 只要一个指针，便可表示整个环状双向链表
+  _List_node<_Tp>* _M_node;  // 只要一个指针，便可表示整个环状双向链表，空白节点
 };
 
 #endif /* __STL_USE_STD_ALLOCATORS */
@@ -255,18 +261,19 @@ template <class _Tp, class _Alloc>
 void 
 _List_base<_Tp,_Alloc>::clear() 
 {
-  _List_node<_Tp>* __cur = (_List_node<_Tp>*) _M_node->_M_next;
+  _List_node<_Tp>* __cur = (_List_node<_Tp>*) _M_node->_M_next;  // 指向开始节点，begin()
   while (__cur != _M_node) {
     _List_node<_Tp>* __tmp = __cur;
     __cur = (_List_node<_Tp>*) __cur->_M_next;
-    _Destroy(&__tmp->_M_data);
+    _Destroy(&__tmp->_M_data);  // 销毁(析构并释放)一个节点
     _M_put_node(__tmp);
   }
+  // 恢复 _M_node 原始状态
   _M_node->_M_next = _M_node;
   _M_node->_M_prev = _M_node;
 }
 
-// 缺省使用 alloc 为配置器
+// 缺省使用 alloc 为配置器，list 数据结构
 template <class _Tp, class _Alloc = __STL_DEFAULT_ALLOCATOR(_Tp) >
 class list : protected _List_base<_Tp, _Alloc> {
   // requirements:
@@ -314,6 +321,7 @@ protected:
 #endif /* __STL_HAS_NAMESPACES */
 
 protected:
+  // 创建(配置并构造)一个节点，带有元素值
   _Node* _M_create_node(const _Tp& __x)
   {
     _Node* __p = _M_get_node();
@@ -323,7 +331,7 @@ protected:
     __STL_UNWIND(_M_put_node(__p));
     return __p;
   }
-
+  // 创建(配置并构造)一个节点
   _Node* _M_create_node()
   {
     _Node* __p = _M_get_node();
@@ -337,40 +345,51 @@ protected:
 public:
   explicit list(const allocator_type& __a = allocator_type()) : _Base(__a) {}
 
+  // 指向首元素的迭代器
   iterator begin()             { return (_Node*)(_M_node->_M_next); }
   const_iterator begin() const { return (_Node*)(_M_node->_M_next); }
 
+  // 指向容器尾端的迭代器
   iterator end()             { return _M_node; }
   const_iterator end() const { return _M_node; }
 
+  // 指向容器尾端的逆迭代器
   reverse_iterator rbegin() 
     { return reverse_iterator(end()); }
   const_reverse_iterator rbegin() const 
     { return const_reverse_iterator(end()); }
 
+  // 指向容器首部的逆迭代器
   reverse_iterator rend()
     { return reverse_iterator(begin()); }
   const_reverse_iterator rend() const
     { return const_reverse_iterator(begin()); }
 
+  // 判断链表是否为空
   bool empty() const { return _M_node->_M_next == _M_node; }
+  // 返回链表的长度
   size_type size() const {
     size_type __result = 0;
     distance(begin(), end(), __result);
     return __result;
   }
+  // 返回可容纳的最大元素数 
   size_type max_size() const { return size_type(-1); }
 
+  // 访问第一个元素
   reference front() { return *begin(); }
   const_reference front() const { return *begin(); }
+  // 访问最后一个元素 
   reference back() { return *(--end()); }
   const_reference back() const { return *(--end()); }
 
+  // 交换内容 
   void swap(list<_Tp, _Alloc>& __x) { __STD::swap(_M_node, __x._M_node); }
 
+  // 在 __position 位置前，插入元素 __x
   iterator insert(iterator __position, const _Tp& __x) {
     _Node* __tmp = _M_create_node(__x);
-    __tmp->_M_next = __position._M_node;
+    __tmp->_M_next = __position._M_node;  // list为双向链表
     __tmp->_M_prev = __position._M_node->_M_prev;
     __position._M_node->_M_prev->_M_next = __tmp;
     __position._M_node->_M_prev = __tmp;
@@ -391,6 +410,7 @@ public:
                           _InputIterator __first, _InputIterator __last,
                           __false_type);
 
+  // 在 __pos 前插入来自范围 [first, last) 的元素
   template <class _InputIterator>
   void insert(iterator __pos, _InputIterator __first, _InputIterator __last) {
     typedef typename _Is_integer<_InputIterator>::_Integral _Integral;
@@ -406,7 +426,7 @@ public:
     { _M_fill_insert(__pos, __n, __x); }
   void _M_fill_insert(iterator __pos, size_type __n, const _Tp& __x); 
 
-  void push_front(const _Tp& __x) { insert(begin(), __x); }  // 插入一个节点，作为头结点
+  void push_front(const _Tp& __x) { insert(begin(), __x); }  // 插入一个节点 __x，作为头结点
   void push_front() {insert(begin());}
   void push_back(const _Tp& __x) { insert(end(), __x); } // 插入一个节点，作为尾节点
   void push_back() {insert(end());}
@@ -425,6 +445,7 @@ public:
   iterator erase(iterator __first, iterator __last);
   void clear() { _Base::clear(); }
 
+  // 改变容器中可存储元素的个数 
   void resize(size_type __new_size, const _Tp& __x);
   void resize(size_type __new_size) { this->resize(__new_size, _Tp()); }
 
@@ -435,6 +456,8 @@ public:
     iterator __tmp = end();
     erase(--__tmp);
   }
+  
+  // 构造拥有 n 个有值 value 的元素的容器
   list(size_type __n, const _Tp& __value,
        const allocator_type& __a = allocator_type())
     : _Base(__a)
@@ -455,6 +478,7 @@ public:
 
 #else /* __STL_MEMBER_TEMPLATES */
 
+  // 构造拥有范围 [first, last) 内容的容器
   list(const _Tp* __first, const _Tp* __last,
        const allocator_type& __a = allocator_type())
     : _Base(__a)
@@ -470,6 +494,7 @@ public:
 
   ~list() { }
 
+  // 赋值运算符
   list<_Tp, _Alloc>& operator=(const list<_Tp, _Alloc>& __x);
 
 public:
@@ -478,12 +503,14 @@ public:
   // The range version is a member template, so we dispatch on whether
   // or not the type is an integer.
 
+  // 以 n 份 value 的副本替换内容
   void assign(size_type __n, const _Tp& __val) { _M_fill_assign(__n, __val); }
 
   void _M_fill_assign(size_type __n, const _Tp& __val);
 
 #ifdef __STL_MEMBER_TEMPLATES
 
+  // 以范围 [first, last) 中元素的副本替换内容
   template <class _InputIterator>
   void assign(_InputIterator __first, _InputIterator __last) {
     typedef typename _Is_integer<_InputIterator>::_Integral _Integral;
@@ -537,7 +564,7 @@ public:
     if (__first != __last) 
       this->transfer(__position, __first, __last);
   }
-  void remove(const _Tp& __value);
+  void remove(const _Tp& __value);  // 删除值为 __value 的链表节点
   void unique();
   void merge(list& __x);
   void reverse();
@@ -551,6 +578,7 @@ public:
 #endif /* __STL_MEMBER_TEMPLATES */
 };
 
+// 比较两个链表容器操作
 template <class _Tp, class _Alloc>
 inline bool 
 operator==(const list<_Tp,_Alloc>& __x, const list<_Tp,_Alloc>& __y)
@@ -771,7 +799,7 @@ void list<_Tp, _Alloc>::merge(list<_Tp, _Alloc>& __x)
     }
     else
       ++__first1;
-  if (__first2 != __last2) transfer(__last1, __first2, __last2);
+  if (__first2 != __last2) transfer(__last1, __first2, __last2); // 将剩余的list2连接到list1上
 }
 
 inline void __List_base_reverse(_List_node_base* __p)
@@ -818,6 +846,7 @@ void list<_Tp, _Alloc>::sort()
 
 #ifdef __STL_MEMBER_TEMPLATES
 
+// 移除满足特定标准的元素，是否应移除该元素则返回 true 的一元谓词
 template <class _Tp, class _Alloc> template <class _Predicate>
 void list<_Tp, _Alloc>::remove_if(_Predicate __pred)
 {
