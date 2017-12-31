@@ -381,9 +381,9 @@ protected:
   typedef simple_alloc<_Tp, _Alloc>  _Node_alloc_type; // 专属的空间配置器，每次配置一个元素大小 
   typedef simple_alloc<_Tp*, _Alloc> _Map_alloc_type;
 
-  _Tp* _M_allocate_node()
+  _Tp* _M_allocate_node()  // deque 内存分配
     { return _Node_alloc_type::allocate(__deque_buf_size(sizeof(_Tp))); }
-  void _M_deallocate_node(_Tp* __p)
+  void _M_deallocate_node(_Tp* __p) // deque 内存释放
     { _Node_alloc_type::deallocate(__p, __deque_buf_size(sizeof(_Tp))); }
   _Tp** _M_allocate_map(size_t __n) 
     { return _Map_alloc_type::allocate(__n); }
@@ -403,16 +403,19 @@ _Deque_base<_Tp,_Alloc>::~_Deque_base() {
   }
 }
 
+// map 主控初始化
 template <class _Tp, class _Alloc>
 void
 _Deque_base<_Tp,_Alloc>::_M_initialize_map(size_t __num_elements)
 {
+  // 所需节点数
   size_t __num_nodes = 
     __num_elements / __deque_buf_size(sizeof(_Tp)) + 1;
-
+  // 一个 map 要管理几个节点，最少 8 个，最多是所需节点数加 2
   _M_map_size = max((size_t) _S_initial_map_size, __num_nodes + 2);
   _M_map = _M_allocate_map(_M_map_size);
 
+  // __nstart、__nfinish 指向 map 的中间位置
   _Tp** __nstart = _M_map + (_M_map_size - __num_nodes) / 2;
   _Tp** __nfinish = __nstart + __num_nodes;
     
@@ -421,6 +424,7 @@ _Deque_base<_Tp,_Alloc>::_M_initialize_map(size_t __num_elements)
   }
   __STL_UNWIND((_M_deallocate_map(_M_map, _M_map_size), 
                 _M_map = 0, _M_map_size = 0));
+  // 为 deque 内的两个迭代器 start 和 finish 指向正确位置
   _M_start._M_set_node(__nstart);
   _M_finish._M_set_node(__nfinish - 1);
   _M_start._M_cur = _M_start._M_first;
@@ -428,6 +432,7 @@ _Deque_base<_Tp,_Alloc>::_M_initialize_map(size_t __num_elements)
                __num_elements % __deque_buf_size(sizeof(_Tp));
 }
 
+// 为 map 内的每个现用节点配置缓冲区，所有缓冲区加起来就是 deque 的可用空间
 template <class _Tp, class _Alloc>
 void _Deque_base<_Tp,_Alloc>::_M_create_nodes(_Tp** __nstart, _Tp** __nfinish)
 {
@@ -439,6 +444,7 @@ void _Deque_base<_Tp,_Alloc>::_M_create_nodes(_Tp** __nstart, _Tp** __nfinish)
   __STL_UNWIND(_M_destroy_nodes(__nstart, __cur));
 }
 
+// 释放
 template <class _Tp, class _Alloc>
 void
 _Deque_base<_Tp,_Alloc>::_M_destroy_nodes(_Tp** __nstart, _Tp** __nfinish)
@@ -504,6 +510,8 @@ protected:
 #endif /* __STL_USE_NAMESPACES */
 
 public:                         // Basic accessors
+  // deque 的操作实现
+  // 迭代器一些操作
   iterator begin() { return _M_start; }
   iterator end() { return _M_finish; }
   const_iterator begin() const { return _M_start; }
@@ -526,13 +534,13 @@ public:                         // Basic accessors
     if (__n >= this->size())
       __stl_throw_range_error("deque");
   }
-
+  // at 实现
   reference at(size_type __n)
     { _M_range_check(__n); return (*this)[__n]; }
   const_reference at(size_type __n) const
     { _M_range_check(__n); return (*this)[__n]; }
 #endif /* __STL_THROW_RANGE_ERRORS */
-
+  // front，back 实现
   reference front() { return *_M_start; }
   reference back() {
     iterator __tmp = _M_finish;
@@ -564,6 +572,7 @@ public:                         // Constructor, destructor.
 #ifdef __STL_MEMBER_TEMPLATES
 
   // Check whether it's an integral type.  If so, it's not an iterator.
+  // deque 构造函数
   template <class _InputIterator>
   deque(_InputIterator __first, _InputIterator __last,
         const allocator_type& __a = allocator_type()) : _Base(__a) {
@@ -584,7 +593,7 @@ public:                         // Constructor, destructor.
   }
 
 #else /* __STL_MEMBER_TEMPLATES */
-
+  // 为每一个节点的缓冲区设定初值
   deque(const value_type* __first, const value_type* __last,
         const allocator_type& __a = allocator_type()) 
     : _Base(__a, __last - __first)
@@ -624,7 +633,7 @@ public:
   // versions: one that takes a count, and one that takes a range.
   // The range version is a member template, so we dispatch on whether
   // or not the type is an integer.
-
+  
   void _M_fill_assign(size_type __n, const _Tp& __val) {
     if (__n > size()) {
       fill(begin(), end(), __val);
@@ -635,7 +644,7 @@ public:
       fill(begin(), end(), __val);
     }
   }
-
+  // assgin 实现
   void assign(size_type __n, const _Tp& __val) {
     _M_fill_assign(__n, __val);
   }
@@ -682,7 +691,7 @@ private:                        // helper functions for assign()
 #endif /* __STL_MEMBER_TEMPLATES */
 
 public:                         // push_* and pop_*
-  
+  // push_back
   void push_back(const value_type& __t) {
     if (_M_finish._M_cur != _M_finish._M_last - 1) {
       construct(_M_finish._M_cur, __t);
@@ -700,7 +709,7 @@ public:                         // push_* and pop_*
     else
       _M_push_back_aux();
   }
-
+  // push_front
   void push_front(const value_type& __t) {
     if (_M_start._M_cur != _M_start._M_first) {
       construct(_M_start._M_cur - 1, __t);
@@ -719,7 +728,7 @@ public:                         // push_* and pop_*
       _M_push_front_aux();
   }
 
-
+  // pop_back
   void pop_back() {
     if (_M_finish._M_cur != _M_finish._M_first) {
       --_M_finish._M_cur;
@@ -728,7 +737,8 @@ public:                         // push_* and pop_*
     else
       _M_pop_back_aux();
   }
-
+  
+  // pop_front
   void pop_front() {
     if (_M_start._M_cur != _M_start._M_last - 1) {
       destroy(_M_start._M_cur);
@@ -739,7 +749,7 @@ public:                         // push_* and pop_*
   }
 
 public:                         // Insert
-
+  // insert(pos, x)
   iterator insert(iterator position, const value_type& __x) {
     if (position._M_cur == _M_start._M_cur) {
       push_front(__x);
@@ -806,6 +816,7 @@ public:                         // Insert
   void resize(size_type new_size) { resize(new_size, value_type()); }
 
 public:                         // Erase
+  // erase(pos)
   iterator erase(iterator __pos) {
     iterator __next = __pos;
     ++__next;
@@ -1579,6 +1590,7 @@ void deque<_Tp,_Alloc>::_M_new_elements_at_back(size_type __new_elems)
 #       endif /* __STL_USE_EXCEPTIONS */
 }
 
+// 重新分配 map 连续空间
 template <class _Tp, class _Alloc>
 void deque<_Tp,_Alloc>::_M_reallocate_map(size_type __nodes_to_add,
                                           bool __add_at_front)
@@ -1633,6 +1645,7 @@ inline bool operator<(const deque<_Tp, _Alloc>& __x,
 
 #ifdef __STL_FUNCTION_TMPL_PARTIAL_ORDER
 
+// 比较操作
 template <class _Tp, class _Alloc>
 inline bool operator!=(const deque<_Tp, _Alloc>& __x,
                        const deque<_Tp, _Alloc>& __y) {
@@ -1656,6 +1669,7 @@ inline bool operator>=(const deque<_Tp, _Alloc>& __x,
   return !(__x < __y);
 }
 
+// swap 实现
 template <class _Tp, class _Alloc>
 inline void swap(deque<_Tp,_Alloc>& __x, deque<_Tp,_Alloc>& __y) {
   __x.swap(__y);
