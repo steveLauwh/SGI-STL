@@ -76,18 +76,19 @@ __STL_BEGIN_NAMESPACE
 
 // Note: this function is simply a kludge to work around several compilers'
 //  bugs in handling constant expressions.
+// 决定缓冲区大小的函数，全局函数，当 __size 小于 512 bytes，就返回 512 / __size
 inline size_t __deque_buf_size(size_t __size) {
   return __size < 512 ? size_t(512 / __size) : size_t(1);
 }
 
-// deque 迭代器
+// deque 迭代器的结构
 template <class _Tp, class _Ref, class _Ptr>
 struct _Deque_iterator {
   typedef _Deque_iterator<_Tp, _Tp&, _Tp*>             iterator;
   typedef _Deque_iterator<_Tp, const _Tp&, const _Tp*> const_iterator;
   static size_t _S_buffer_size() { return __deque_buf_size(sizeof(_Tp)); }
 
-  typedef random_access_iterator_tag iterator_category;
+  typedef random_access_iterator_tag iterator_category;  // Random access iterator
   typedef _Tp value_type;
   typedef _Ptr pointer;
   typedef _Ref reference;
@@ -97,10 +98,10 @@ struct _Deque_iterator {
 
   typedef _Deque_iterator _Self;
 
-  _Tp* _M_cur;
-  _Tp* _M_first;
-  _Tp* _M_last;
-  _Map_pointer _M_node;
+  _Tp* _M_cur;   // 迭代器指向缓冲区的当前元素
+  _Tp* _M_first; // 迭代器指向缓冲区的头部
+  _Tp* _M_last;  // 迭代器指向缓冲区的尾部
+  _Map_pointer _M_node;  // 迭代器指向 map 的 node
 
   _Deque_iterator(_Tp* __x, _Map_pointer __y) 
     : _M_cur(__x), _M_first(*__y),
@@ -110,75 +111,88 @@ struct _Deque_iterator {
     : _M_cur(__x._M_cur), _M_first(__x._M_first), 
       _M_last(__x._M_last), _M_node(__x._M_node) {}
 
-  reference operator*() const { return *_M_cur; }
+  reference operator*() const { return *_M_cur; }  // 获取迭代器当前指向元素
 #ifndef __SGI_STL_NO_ARROW_OPERATOR
   pointer operator->() const { return _M_cur; }
 #endif /* __SGI_STL_NO_ARROW_OPERATOR */
 
+  // 迭代器 operator-
   difference_type operator-(const _Self& __x) const {
     return difference_type(_S_buffer_size()) * (_M_node - __x._M_node - 1) +
       (_M_cur - _M_first) + (__x._M_last - __x._M_cur);
   }
 
+  // 迭代器 前置式operator++
   _Self& operator++() {
-    ++_M_cur;
-    if (_M_cur == _M_last) {
-      _M_set_node(_M_node + 1);
-      _M_cur = _M_first;
+    ++_M_cur;  // 先移动下一个元素
+    if (_M_cur == _M_last) { // 如果已到达所在缓冲区的尾端
+      _M_set_node(_M_node + 1); // 就切换到下一节点(下一个缓冲区)
+      _M_cur = _M_first;   // 指向下一个缓冲区的第一个元素
     }
     return *this; 
   }
+  
+  // 迭代器 后置式operator++
   _Self operator++(int)  {
     _Self __tmp = *this;
     ++*this;
     return __tmp;
   }
 
+  // 迭代器 前置式operator--
   _Self& operator--() {
-    if (_M_cur == _M_first) {
-      _M_set_node(_M_node - 1);
-      _M_cur = _M_last;
+    if (_M_cur == _M_first) {  // 如果已到达所在缓冲区的头端
+      _M_set_node(_M_node - 1); // 就切换到上一个节点(上一个缓冲区)
+      _M_cur = _M_last;  // 指向上一个缓冲区的最后一个元素
     }
-    --_M_cur;
+    --_M_cur;  // 移动上一个元素
     return *this;
   }
+  
+  // 迭代器 后置式operator--
   _Self operator--(int) {
     _Self __tmp = *this;
     --*this;
     return __tmp;
   }
 
+  // 迭代器可以直接移动 n 个距离
   _Self& operator+=(difference_type __n)
   {
     difference_type __offset = __n + (_M_cur - _M_first);
     if (__offset >= 0 && __offset < difference_type(_S_buffer_size()))
-      _M_cur += __n;
-    else {
+      _M_cur += __n;  // 目标位置在同一缓冲区内
+    else {  // 标记的位置不在同一缓冲区内
       difference_type __node_offset =
         __offset > 0 ? __offset / difference_type(_S_buffer_size())
                    : -difference_type((-__offset - 1) / _S_buffer_size()) - 1;
-      _M_set_node(_M_node + __node_offset);
-      _M_cur = _M_first + 
+      _M_set_node(_M_node + __node_offset);   // 切换到正确的节点(缓冲区) 
+      _M_cur = _M_first +   // 切换到正确的元素
         (__offset - __node_offset * difference_type(_S_buffer_size()));
     }
     return *this;
   }
 
+  // 调用 operator+=
   _Self operator+(difference_type __n) const
   {
     _Self __tmp = *this;
     return __tmp += __n;
   }
 
+  // 调用 operator+=
   _Self& operator-=(difference_type __n) { return *this += -__n; }
  
+  // 调用 operator-=
   _Self operator-(difference_type __n) const {
     _Self __tmp = *this;
     return __tmp -= __n;
   }
 
+  // 迭代器可以直接移动到 n 个距离，获取该位置的元素
   reference operator[](difference_type __n) const { return *(*this + __n); }
-
+  
+  // 两个容器比较
   bool operator==(const _Self& __x) const { return _M_cur == __x._M_cur; }
   bool operator!=(const _Self& __x) const { return !(*this == __x); }
   bool operator<(const _Self& __x) const {
@@ -189,6 +203,7 @@ struct _Deque_iterator {
   bool operator<=(const _Self& __x) const { return !(__x < *this); }
   bool operator>=(const _Self& __x) const { return !(*this < __x); }
 
+  // 调用 set_node() 移动下一个缓冲区
   void _M_set_node(_Map_pointer __new_node) {
     _M_node = __new_node;
     _M_first = *__new_node;
@@ -231,6 +246,7 @@ inline ptrdiff_t* distance_type(const _Deque_iterator<_Tp,_Ref,_Ptr>&) {
 #ifdef __STL_USE_STD_ALLOCATORS
 
 // Base class for ordinary allocators.
+// deque 的构造与内存管理--基类
 template <class _Tp, class _Alloc, bool __is_static>
 class _Deque_alloc_base {
 public:
@@ -249,19 +265,25 @@ protected:
   allocator_type      _M_node_allocator;
   _Map_allocator_type _M_map_allocator;
 
+  // 内存分配
   _Tp* _M_allocate_node() {
     return _M_node_allocator.allocate(__deque_buf_size(sizeof(_Tp)));
   }
+  
+  // 内存释放
   void _M_deallocate_node(_Tp* __p) {
     _M_node_allocator.deallocate(__p, __deque_buf_size(sizeof(_Tp)));
   }
+  
+  // map 的内存分配
   _Tp** _M_allocate_map(size_t __n) 
     { return _M_map_allocator.allocate(__n); }
+  // map 的内存释放
   void _M_deallocate_map(_Tp** __p, size_t __n) 
     { _M_map_allocator.deallocate(__p, __n); }
 
-  _Tp** _M_map;
-  size_t _M_map_size;
+  _Tp** _M_map;   // map 是小块连续空间，其内的每个元素都是一个指针(节点)，指向一块缓冲区
+  size_t _M_map_size;  // map 内可以容纳多个指针
 };
 
 // Specialization for instanceless allocators.
@@ -293,6 +315,7 @@ protected:
   size_t _M_map_size;
 };
 
+// deque 的基类
 template <class _Tp, class _Alloc>
 class _Deque_base
   : public _Deque_alloc_base<_Tp,_Alloc,
@@ -314,14 +337,14 @@ public:
   ~_Deque_base();    
 
 protected:
-  void _M_initialize_map(size_t);
+  void _M_initialize_map(size_t); // 初始化一个小块连续空间 map
   void _M_create_nodes(_Tp** __nstart, _Tp** __nfinish);
   void _M_destroy_nodes(_Tp** __nstart, _Tp** __nfinish);
   enum { _S_initial_map_size = 8 };
 
 protected:
-  iterator _M_start;
-  iterator _M_finish;
+  iterator _M_start;  // 指向第一个缓冲区的第一个元素
+  iterator _M_finish; // 指向最后一个缓冲区的最后一个元素
 };
 
 #else /* __STL_USE_STD_ALLOCATORS */
@@ -355,7 +378,7 @@ protected:
   iterator _M_start;
   iterator _M_finish;
 
-  typedef simple_alloc<_Tp, _Alloc>  _Node_alloc_type;
+  typedef simple_alloc<_Tp, _Alloc>  _Node_alloc_type; // 专属的空间配置器，每次配置一个元素大小 
   typedef simple_alloc<_Tp*, _Alloc> _Map_alloc_type;
 
   _Tp* _M_allocate_node()
