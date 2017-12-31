@@ -4,6 +4,8 @@
 
 任何特定的数据结构都是为了实现某种特定的算法。
 
+![](https://github.com/steveLauwh/SGI-STL/raw/master/The%20Annotated%20STL%20Sources%20V3.3/Other/container.PNG)
+
 ## 序列式容器(sequence container)
 
 * array (C++ 提供，build-in)
