@@ -13,3 +13,5 @@ SGI STL 允许指定 buffer 的大小，默认值为 0 表示将使用 512 bytes
 
 ![](https://github.com/steveLauwh/SGI-STL/raw/master/The%20Annotated%20STL%20Sources%20V3.3/Other/deque%20DS.PNG)
 
+一个小块连续空间 map 包含节点数，最少 8 个，最多是所需节点数加上 2。
+
