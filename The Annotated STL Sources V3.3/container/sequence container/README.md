@@ -1,4 +1,4 @@
-## vector
+## [vector](https://github.com/steveLauwh/SGI-STL/tree/master/The%20Annotated%20STL%20Sources%20V3.3/container/sequence%20container/vector)
 
 * vector 与 array 唯一区别是空间的运用的灵活性。
 * array 是静态空间，一旦配置了就不能改变。
@@ -34,7 +34,7 @@ vector<Shape>::iterator svite; // svite 的类型就是 Shape*
 
 `clear()`：清除所有元素
 
-## list
+## [list](https://github.com/steveLauwh/SGI-STL/tree/master/The%20Annotated%20STL%20Sources%20V3.3/container/sequence%20container/list)
 
 * STL list 是一个双向链表，迭代器必须具备前移、后移的能力，所以 list 提供的是 Bidirectional Iterator。
 * 只要刻意在环状链表的尾端加上一个空白节点，便符合 STL 规范之 “前闭后开” 区间。
@@ -51,7 +51,7 @@ vector<Shape>::iterator svite; // svite 的类型就是 Shape*
 
 `insert()`：插入是指 插入在...之前，插入完成后，新节点将位于标示出插入点所指之节点的前方。
 
-## deque
+## [deque](https://github.com/steveLauwh/SGI-STL/tree/master/The%20Annotated%20STL%20Sources%20V3.3/container/sequence%20container/deque)
 
 * deque 是一种双向开口的连续线性空间。可以在头尾两端分别做元素的插入和删除操作。
 * deque 和 vector 的差异：第一，deque 允许于常数时间内对起头端进行元素的插入或移除操作；第二，deque 没有容量，它是动态地以分段连续空间组合而成。
@@ -77,7 +77,7 @@ deque 是分段连续空间，维持其“整体连续”假象的任务。
 
 `pop_front()`：前端取出
 
-## stack
+## [stack](https://github.com/steveLauwh/SGI-STL/tree/master/The%20Annotated%20STL%20Sources%20V3.3/container/sequence%20container/stack)
 
 stack 是一种先进后出的数据结构。它只有一个出口。
 
@@ -91,7 +91,7 @@ STL stack 往往不被归类为 container(容器)，而被归类为 container ad
 
 `top()`：指向顶部
 
-## queue
+## [queue](https://github.com/steveLauwh/SGI-STL/tree/master/The%20Annotated%20STL%20Sources%20V3.3/container/sequence%20container/queue)
 
 queue 是一种先进先出的数据结构。从最底端加入元素，从最顶端取出元素。
 
@@ -99,7 +99,7 @@ SGI STL 默认是以 deque 作为缺省情况下的 queue 底部结构。
 
 STL queue 往往不被归类为 container(容器)，而被归类为 container adapter。
 
-## heap
+## [heap](https://github.com/steveLauwh/SGI-STL/tree/master/The%20Annotated%20STL%20Sources%20V3.3/container/sequence%20container/heap)
 
 二叉搜索树的输入需要足够的随机性。
 
@@ -115,7 +115,7 @@ STL 提供的是 max-heap。
 
 `make_heap()`：用来将一段现有的数据转化为一个 heap。
 
-## priority_queue
+## [priority_queue](https://github.com/steveLauwh/SGI-STL/tree/master/The%20Annotated%20STL%20Sources%20V3.3/container/sequence%20container/queue)
 
 priority_queue 是一个拥有权值观念的 queue。
 
@@ -129,7 +129,7 @@ priority_queue 是一个拥有权值观念的 queue。
 
 `pop()`：用 pop_heap() 将最大元素放到底部容器的最尾端，并不是真正弹出，再调用底部容器 vector 所提供的 pop_back() 弹出元素。
 
-## slist
+## [slist](https://github.com/steveLauwh/SGI-STL/tree/master/The%20Annotated%20STL%20Sources%20V3.3/container/sequence%20container/slist)
 
 STL slist 是一个单向链表。
 
