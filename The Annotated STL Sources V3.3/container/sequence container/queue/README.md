@@ -7,3 +7,5 @@ queue 与 stack 一样，以某种容器为底层结构，被称为 container ad
 在 SGI STL 里，queue 默认是以 deque 为底层容器，将 deque 的尾端出关闭，首端进关闭，就可以实现 queue 的功能。
 
 queue 还可以使用 list 作为底层容器。
+
+![](https://github.com/steveLauwh/SGI-STL/raw/master/The%20Annotated%20STL%20Sources%20V3.3/Other/queue.PNG)
