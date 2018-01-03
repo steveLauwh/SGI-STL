@@ -10,3 +10,4 @@ SGI STL 里的 stack 使用的是以 deque 为底部结构来实现其所有功�
 
 stack 没有迭代器。
 
+![](https://github.com/steveLauwh/SGI-STL/raw/master/The%20Annotated%20STL%20Sources%20V3.3/Other/stack.PNG)
