@@ -47,7 +47,7 @@ inline bool operator==(const queue<_Tp, _Seq>&, const queue<_Tp, _Seq>&);
 template <class _Tp, class _Seq>
 inline bool operator<(const queue<_Tp, _Seq>&, const queue<_Tp, _Seq>&);
 
-
+// queue 类实现，与 stack 类似；其中 _Sequence 类就是继承的底层容器
 template <class _Tp, class _Sequence>
 class queue {
 
@@ -82,21 +82,22 @@ public:
   typedef typename _Sequence::reference       reference;
   typedef typename _Sequence::const_reference const_reference;
 protected:
-  _Sequence c;
+  _Sequence c;  // 底层容器
 public:
   queue() : c() {}
   explicit queue(const _Sequence& __c) : c(__c) {}
 
   bool empty() const { return c.empty(); }
   size_type size() const { return c.size(); }
-  reference front() { return c.front(); }
+  reference front() { return c.front(); }  // 返回首部元素
   const_reference front() const { return c.front(); }
-  reference back() { return c.back(); }
+  reference back() { return c.back(); }  // 返回尾部元素
   const_reference back() const { return c.back(); }
-  void push(const value_type& __x) { c.push_back(__x); }
-  void pop() { c.pop_front(); }
+  void push(const value_type& __x) { c.push_back(__x); }  // 尾部进入元素
+  void pop() { c.pop_front(); }  // 首部弹出元素
 };
 
+// 两个 queue 比较
 template <class _Tp, class _Sequence>
 bool 
 operator==(const queue<_Tp, _Sequence>& __x, const queue<_Tp, _Sequence>& __y)
@@ -143,6 +144,8 @@ operator>=(const queue<_Tp, _Sequence>& __x, const queue<_Tp, _Sequence>& __y)
 
 #endif /* __STL_FUNCTION_TMPL_PARTIAL_ORDER */
 
+
+// 优先队列
 template <class _Tp, 
           class _Sequence __STL_DEPENDENT_DEFAULT_TMPL(vector<_Tp>),
           class _Compare
