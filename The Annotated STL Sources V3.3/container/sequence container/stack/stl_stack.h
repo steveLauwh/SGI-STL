@@ -36,7 +36,7 @@
 __STL_BEGIN_NAMESPACE
 
 // Forward declarations of operators == and <, needed for friend declaration.
-
+// 前置声明
 template <class _Tp, 
           class _Sequence __STL_DEPENDENT_DEFAULT_TMPL(deque<_Tp>) >
 class stack;
@@ -47,7 +47,7 @@ bool operator==(const stack<_Tp,_Seq>& __x, const stack<_Tp,_Seq>& __y);
 template <class _Tp, class _Seq>
 bool operator<(const stack<_Tp,_Seq>& __x, const stack<_Tp,_Seq>& __y);
 
-
+// stack 类，_Sequence 容器
 template <class _Tp, class _Sequence>
 class stack {
 
@@ -81,19 +81,20 @@ public:
   typedef typename _Sequence::reference       reference;
   typedef typename _Sequence::const_reference const_reference;
 protected:
-  _Sequence c;
+  _Sequence c;  // stack 底部容器
 public:
   stack() : c() {}
   explicit stack(const _Sequence& __s) : c(__s) {}
 
-  bool empty() const { return c.empty(); }
-  size_type size() const { return c.size(); }
-  reference top() { return c.back(); }
+  bool empty() const { return c.empty(); }  // 判断 stack 是否为空
+  size_type size() const { return c.size(); }  // 判断 stack 的大小
+  reference top() { return c.back(); }  // 尾部元素
   const_reference top() const { return c.back(); }
-  void push(const value_type& __x) { c.push_back(__x); }
-  void pop() { c.pop_back(); }
+  void push(const value_type& __x) { c.push_back(__x); }  // 尾部插入元素
+  void pop() { c.pop_back(); }  // 尾部弹出元素
 };
 
+// 比较两个 stack 
 template <class _Tp, class _Seq>
 bool operator==(const stack<_Tp,_Seq>& __x, const stack<_Tp,_Seq>& __y)
 {
