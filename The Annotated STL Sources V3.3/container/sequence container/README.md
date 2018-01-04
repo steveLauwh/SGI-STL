@@ -99,6 +99,14 @@ SGI STL 默认是以 deque 作为缺省情况下的 queue 底部结构。
 
 STL queue 往往不被归类为 container(容器)，而被归类为 container adapter。
 
+`push()`：尾端进
+
+`pop()`：首端出
+
+`front()`：返回首端元素
+
+`back()`：返回尾端元素
+
 ## [heap](https://github.com/steveLauwh/SGI-STL/tree/master/The%20Annotated%20STL%20Sources%20V3.3/container/sequence%20container/heap)
 
 二叉搜索树的输入需要足够的随机性。
