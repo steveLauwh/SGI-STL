@@ -66,7 +66,7 @@ int main()
 
 	printArray(arr, arr_size);
 	
-  // 对 heap 排序
+    // 对 heap 排序
 	sort_heap(arr, arr+5);
 
 	printArray(arr, arr_size);
