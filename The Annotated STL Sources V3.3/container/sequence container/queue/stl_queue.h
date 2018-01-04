@@ -145,7 +145,7 @@ operator>=(const queue<_Tp, _Sequence>& __x, const queue<_Tp, _Sequence>& __y)
 #endif /* __STL_FUNCTION_TMPL_PARTIAL_ORDER */
 
 
-// 优先队列，默认底层容器是 vector，利用 max-heap 规则
+// 优先队列，默认底层容器是 vector，利用 max-heap 规则 
 template <class _Tp, 
           class _Sequence __STL_DEPENDENT_DEFAULT_TMPL(vector<_Tp>),
           class _Compare
