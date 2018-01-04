@@ -27,6 +27,8 @@ protected:
 };
 ```
 
+![](https://github.com/steveLauwh/SGI-STL/raw/master/The%20Annotated%20STL%20Sources%20V3.3/Other/vector.PNG)
+
 ### 看 vector 底层实现的记录
 
 size_type：无符号整数类型（通常是 std::size_t）
