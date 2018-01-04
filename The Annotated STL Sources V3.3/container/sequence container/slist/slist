@@ -11,7 +11,7 @@
  * purpose.  It is provided "as is" without express or implied warranty.
  *
  */
-
+// 提供外部使用头文件
 #ifndef __SGI_STL_SLIST
 #define __SGI_STL_SLIST
 
