@@ -1,12 +1,21 @@
-## 关联式容器
+# 关联式容器
 
 * 标准的 STL 关联式容器分为 set(集合) 和 map(映射表) 两大类。衍生的还有 multiset(多键集合) 和 multimap(多键映射表)。这些容器的底层机制都是 [RB-tree](https://github.com/steveLauwh/Data-Structures-And-Algorithms/tree/master/Tree/RB-tree)(红黑树原理) 完成。
 
 * 散列表 [hash table](https://github.com/steveLauwh/Data-Structures-And-Algorithms/tree/master/Hash%20Table)(Hash Table 原理)，以 hash table 为底层机制而完成的 hash_set、hash_map、hash_multiset、hash_multimap。
 
-### 以 RB-tree 为底层机制的关联式容器
+## 以 RB-tree 为底层机制的关联式容器
 
 ### [底层机制 RB-tree](https://github.com/steveLauwh/SGI-STL/tree/master/The%20Annotated%20STL%20Sources%20V3.3/container/associative%20container/RB-tree)
+
+SGI STL 有实现 RB-tree(红黑树) 的源码。
+
+红黑树是一棵特殊的二叉搜索树。
+
+二叉搜索树的元素插入操作：插入新元素时，可以从根节点开始，遇到键值比插入元素大就向左，遇到键值比插入元素小就向右，一直到尾端，即为插入点。
+
+二叉搜索树的元素删除操作：删除节点 A，当 A 只有一个子节点，就直接将 A 的子节点连接到 A 的父节点，并将 A 删除。当 A 有两个子节点，将其右子树内的
+最小节点取代 A。
 
 ### [set](https://github.com/steveLauwh/SGI-STL/tree/master/The%20Annotated%20STL%20Sources%20V3.3/container/associative%20container/set)
 
@@ -16,7 +25,7 @@
 
 ### [multimap](https://github.com/steveLauwh/SGI-STL/tree/master/The%20Annotated%20STL%20Sources%20V3.3/container/associative%20container/multimap)
 
-### 以 hash table 为底层机制的关联式容器
+## 以 hash table 为底层机制的关联式容器
 
 ### [底层机制 hashtable](https://github.com/steveLauwh/SGI-STL/tree/master/The%20Annotated%20STL%20Sources%20V3.3/container/associative%20container/hashtable)
 
