@@ -52,7 +52,7 @@ relinked into its place, rather than copied, so that the only
 iterators invalidated are those referring to the deleted node.
 
 */
-
+// 红黑树内部实现
 #include <stl_algobase.h>
 #include <stl_alloc.h>
 #include <stl_construct.h>
@@ -65,25 +65,28 @@ __STL_BEGIN_NAMESPACE
 #endif
 
 typedef bool _Rb_tree_Color_type;
-const _Rb_tree_Color_type _S_rb_tree_red = false;
-const _Rb_tree_Color_type _S_rb_tree_black = true;
+const _Rb_tree_Color_type _S_rb_tree_red = false; // 红色为 0
+const _Rb_tree_Color_type _S_rb_tree_black = true; // 黑色为 1
 
+// RB-tree 节点-基类
 struct _Rb_tree_node_base
 {
   typedef _Rb_tree_Color_type _Color_type;
   typedef _Rb_tree_node_base* _Base_ptr;
 
-  _Color_type _M_color; 
-  _Base_ptr _M_parent;
-  _Base_ptr _M_left;
-  _Base_ptr _M_right;
+  _Color_type _M_color;   // 节点颜色，非红即黑
+  _Base_ptr _M_parent;    // 父节点
+  _Base_ptr _M_left;      // 左节点
+  _Base_ptr _M_right;     // 右节点
 
+  // 找到 RB-tree 的最小值节点
   static _Base_ptr _S_minimum(_Base_ptr __x)
   {
     while (__x->_M_left != 0) __x = __x->_M_left;
     return __x;
   }
 
+  // 找到 RB-tree 的最大值节点
   static _Base_ptr _S_maximum(_Base_ptr __x)
   {
     while (__x->_M_right != 0) __x = __x->_M_right;
@@ -91,31 +94,33 @@ struct _Rb_tree_node_base
   }
 };
 
+// RB-tree 节点
 template <class _Value>
 struct _Rb_tree_node : public _Rb_tree_node_base
 {
   typedef _Rb_tree_node<_Value>* _Link_type;
-  _Value _M_value_field;
+  _Value _M_value_field;  // 节点值
 };
 
-
+// RB-tree 的迭代器-基类
 struct _Rb_tree_base_iterator
 {
   typedef _Rb_tree_node_base::_Base_ptr _Base_ptr;
-  typedef bidirectional_iterator_tag iterator_category;
+  typedef bidirectional_iterator_tag iterator_category; // 双向迭代器
   typedef ptrdiff_t difference_type;
-  _Base_ptr _M_node;
+  _Base_ptr _M_node; // 它用来与容器之间产生一个连接关系
 
+  // 供 operator++() 调用
   void _M_increment()
   {
-    if (_M_node->_M_right != 0) {
+    if (_M_node->_M_right != 0) { // 如果有右子节点，就向右走
       _M_node = _M_node->_M_right;
-      while (_M_node->_M_left != 0)
+      while (_M_node->_M_left != 0) // 然后一直往左子树走到底
         _M_node = _M_node->_M_left;
     }
     else {
-      _Base_ptr __y = _M_node->_M_parent;
-      while (_M_node == __y->_M_right) {
+      _Base_ptr __y = _M_node->_M_parent; // 没有右子节点，找其父节点
+      while (_M_node == __y->_M_right) { // 当该节点为其父节点的右子节点，就一直向上找父节点
         _M_node = __y;
         __y = __y->_M_parent;
       }
@@ -124,9 +129,10 @@ struct _Rb_tree_base_iterator
     }
   }
 
+  // 供 operator--() 调用
   void _M_decrement()
-  {
-    if (_M_node->_M_color == _S_rb_tree_red &&
+  { // 红色节点，父节点的父节点等于自己
+    if (_M_node->_M_color == _S_rb_tree_red &&  
         _M_node->_M_parent->_M_parent == _M_node)
       _M_node = _M_node->_M_right;
     else if (_M_node->_M_left != 0) {
@@ -146,6 +152,7 @@ struct _Rb_tree_base_iterator
   }
 };
 
+// RB-tree 的迭代器
 template <class _Value, class _Ref, class _Ptr>
 struct _Rb_tree_iterator : public _Rb_tree_base_iterator
 {
