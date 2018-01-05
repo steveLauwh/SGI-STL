@@ -14,4 +14,3 @@ SGI STL 六大组件的代码测试
 ## 参考
 
 * [C++ reference](http://en.cppreference.com/w/)
-* <<STL 源码剖析>>-书中测试用例
