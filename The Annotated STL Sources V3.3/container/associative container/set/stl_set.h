@@ -54,7 +54,7 @@ template <class _Key, class _Compare, class _Alloc>
 inline bool operator<(const set<_Key,_Compare,_Alloc>& __x, 
                       const set<_Key,_Compare,_Alloc>& __y);
 
-
+// set 类
 template <class _Key, class _Compare, class _Alloc>
 class set {
   // requirements:
@@ -71,14 +71,14 @@ public:
   typedef _Compare value_compare;
 private:
   typedef _Rb_tree<key_type, value_type, 
-                  _Identity<value_type>, key_compare, _Alloc> _Rep_type;
+                  _Identity<value_type>, key_compare, _Alloc> _Rep_type;  // set 的底层实现为 RB-tree
   _Rep_type _M_t;  // red-black tree representing set
 public:
   typedef typename _Rep_type::const_pointer pointer;
   typedef typename _Rep_type::const_pointer const_pointer;
   typedef typename _Rep_type::const_reference reference;
   typedef typename _Rep_type::const_reference const_reference;
-  typedef typename _Rep_type::const_iterator iterator;
+  typedef typename _Rep_type::const_iterator iterator; // iterator 的类型为 const_iterator
   typedef typename _Rep_type::const_iterator const_iterator;
   typedef typename _Rep_type::const_reverse_iterator reverse_iterator;
   typedef typename _Rep_type::const_reverse_iterator const_reverse_iterator;
@@ -94,10 +94,10 @@ public:
     : _M_t(__comp, __a) {}
 
 #ifdef __STL_MEMBER_TEMPLATES
-  template <class _InputIterator>
+  template <class _InputIterator>  // set 构造函数，实现调用红黑树的 insert_unique，说明 set 里元素唯一
   set(_InputIterator __first, _InputIterator __last)
     : _M_t(_Compare(), allocator_type())
-    { _M_t.insert_unique(__first, __last); }
+    { _M_t.insert_unique(__first, __last); }  
 
   template <class _InputIterator>
   set(_InputIterator __first, _InputIterator __last, const _Compare& __comp,
@@ -123,28 +123,28 @@ public:
 #endif /* __STL_MEMBER_TEMPLATES */
 
   set(const set<_Key,_Compare,_Alloc>& __x) : _M_t(__x._M_t) {}
-  set<_Key,_Compare,_Alloc>& operator=(const set<_Key, _Compare, _Alloc>& __x)
+  set<_Key,_Compare,_Alloc>& operator=(const set<_Key, _Compare, _Alloc>& __x) // 赋值给容器 
   { 
     _M_t = __x._M_t; 
     return *this;
   }
 
   // accessors:
-
+  // 返回用于比较键的函数        
   key_compare key_comp() const { return _M_t.key_comp(); }
-  value_compare value_comp() const { return _M_t.key_comp(); }
-  allocator_type get_allocator() const { return _M_t.get_allocator(); }
+  value_compare value_comp() const { return _M_t.key_comp(); } // 返回用于在 value_type 类型的对象中比较键的函数。
+  allocator_type get_allocator() const { return _M_t.get_allocator(); } // 返回相关的分配器 
 
-  iterator begin() const { return _M_t.begin(); }
-  iterator end() const { return _M_t.end(); }
-  reverse_iterator rbegin() const { return _M_t.rbegin(); } 
-  reverse_iterator rend() const { return _M_t.rend(); }
-  bool empty() const { return _M_t.empty(); }
-  size_type size() const { return _M_t.size(); }
-  size_type max_size() const { return _M_t.max_size(); }
-  void swap(set<_Key,_Compare,_Alloc>& __x) { _M_t.swap(__x._M_t); }
+  iterator begin() const { return _M_t.begin(); } // 返回指向容器第一个元素的迭代器 
+  iterator end() const { return _M_t.end(); } // 返回指向容器尾端的迭代器 
+  reverse_iterator rbegin() const { return _M_t.rbegin(); } // 返回一个指向容器最后一个元素的反向迭代器 
+  reverse_iterator rend() const { return _M_t.rend(); } // 返回一个指向容器前端的反向迭代器 
+  bool empty() const { return _M_t.empty(); } // 检查容器是否为空 
+  size_type size() const { return _M_t.size(); } // 返回容纳的元素数 
+  size_type max_size() const { return _M_t.max_size(); } // 返回可容纳的最大元素数 
+  void swap(set<_Key,_Compare,_Alloc>& __x) { _M_t.swap(__x._M_t); } // 交换内容 
 
-  // insert/erase
+  // insert/erase 插入操作
   pair<iterator,bool> insert(const value_type& __x) { 
     pair<typename _Rep_type::iterator, bool> __p = _M_t.insert_unique(__x); 
     return pair<iterator, bool>(__p.first, __p.second);
@@ -165,7 +165,7 @@ public:
   void insert(const value_type* __first, const value_type* __last) {
     _M_t.insert_unique(__first, __last);
   }
-#endif /* __STL_MEMBER_TEMPLATES */
+#endif /* __STL_MEMBER_TEMPLATES */ // 删除操作
   void erase(iterator __position) { 
     typedef typename _Rep_type::iterator _Rep_iterator;
     _M_t.erase((_Rep_iterator&)__position); 
@@ -181,7 +181,7 @@ public:
 
   // set operations:
 
-  iterator find(const key_type& __x) const { return _M_t.find(__x); }
+  iterator find(const key_type& __x) const { return _M_t.find(__x); } // 寻找带有特定键的元素 
   size_type count(const key_type& __x) const {
     return _M_t.find(__x) == _M_t.end() ? 0 : 1;
   }
@@ -208,6 +208,7 @@ public:
 #endif /* __STL_TEMPLATE_FRIENDS */
 };
 
+// 比较操作
 template <class _Key, class _Compare, class _Alloc>
 inline bool operator==(const set<_Key,_Compare,_Alloc>& __x, 
                        const set<_Key,_Compare,_Alloc>& __y) {
