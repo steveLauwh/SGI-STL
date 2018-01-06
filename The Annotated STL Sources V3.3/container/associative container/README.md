@@ -33,6 +33,12 @@ template<
 
 ### [map](https://github.com/steveLauwh/SGI-STL/tree/master/The%20Annotated%20STL%20Sources%20V3.3/container/associative%20container/map)
 
+map 元素是键值对 pair，同时拥有键值(key)和实值(value)。
+
+map 不允许元素的键值有相同，必须唯一。
+
+map 所有元素按照元素的键值自动排序。
+
 ### [multiset](https://github.com/steveLauwh/SGI-STL/tree/master/The%20Annotated%20STL%20Sources%20V3.3/container/associative%20container/multiset)
 
 ### [multimap](https://github.com/steveLauwh/SGI-STL/tree/master/The%20Annotated%20STL%20Sources%20V3.3/container/associative%20container/multimap)
