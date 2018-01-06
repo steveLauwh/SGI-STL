@@ -39,6 +39,15 @@ map 不允许元素的键值有相同，必须唯一。
 
 map 所有元素按照元素的键值自动排序。
 
+```cpp
+template<
+    class Key,
+    class T,
+    class Compare = std::less<Key>,
+    class Allocator = std::allocator<std::pair<const Key, T> >
+> class map;
+```
+
 ### [multiset](https://github.com/steveLauwh/SGI-STL/tree/master/The%20Annotated%20STL%20Sources%20V3.3/container/associative%20container/multiset)
 
 ### [multimap](https://github.com/steveLauwh/SGI-STL/tree/master/The%20Annotated%20STL%20Sources%20V3.3/container/associative%20container/multimap)
