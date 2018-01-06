@@ -135,7 +135,7 @@ struct _Rb_tree_base_iterator
     if (_M_node->_M_color == _S_rb_tree_red &&  
         _M_node->_M_parent->_M_parent == _M_node)
       _M_node = _M_node->_M_right;
-    else if (_M_node->_M_left != 0) {
+    else if (_M_node->_M_left != 0) { // 找出 node 的左子树最大值
       _Base_ptr __y = _M_node->_M_left;
       while (__y->_M_right != 0)
         __y = __y->_M_right;
@@ -175,7 +175,7 @@ struct _Rb_tree_iterator : public _Rb_tree_base_iterator
 #ifndef __SGI_STL_NO_ARROW_OPERATOR
   pointer operator->() const { return &(operator*()); }
 #endif /* __SGI_STL_NO_ARROW_OPERATOR */
-
+  // RB-tree 迭代器 ++，-- 操作
   _Self& operator++() { _M_increment(); return *this; }
   _Self operator++(int) {
     _Self __tmp = *this;
@@ -220,6 +220,7 @@ inline _Value* value_type(const _Rb_tree_iterator<_Value, _Ref, _Ptr>&) {
 
 #endif /* __STL_CLASS_PARTIAL_SPECIALIZATION */
 
+// 左旋转
 inline void 
 _Rb_tree_rotate_left(_Rb_tree_node_base* __x, _Rb_tree_node_base*& __root)
 {
@@ -239,6 +240,7 @@ _Rb_tree_rotate_left(_Rb_tree_node_base* __x, _Rb_tree_node_base*& __root)
   __x->_M_parent = __y;
 }
 
+// 右旋转
 inline void 
 _Rb_tree_rotate_right(_Rb_tree_node_base* __x, _Rb_tree_node_base*& __root)
 {
@@ -258,6 +260,7 @@ _Rb_tree_rotate_right(_Rb_tree_node_base* __x, _Rb_tree_node_base*& __root)
   __x->_M_parent = __y;
 }
 
+// RB-tree 平衡调整
 inline void 
 _Rb_tree_rebalance(_Rb_tree_node_base* __x, _Rb_tree_node_base*& __root)
 {
@@ -303,6 +306,7 @@ _Rb_tree_rebalance(_Rb_tree_node_base* __x, _Rb_tree_node_base*& __root)
   __root->_M_color = _S_rb_tree_black;
 }
 
+// 删除一个节点后调整
 inline _Rb_tree_node_base*
 _Rb_tree_rebalance_for_erase(_Rb_tree_node_base* __z,
                              _Rb_tree_node_base*& __root,
@@ -442,6 +446,7 @@ _Rb_tree_rebalance_for_erase(_Rb_tree_node_base* __z,
 
 #ifdef __STL_USE_STD_ALLOCATORS
 
+// RB-tree 的构造与内存分配-基类
 // _Base for general standard-conforming allocators.
 template <class _Tp, class _Alloc, bool _S_instanceless>
 class _Rb_tree_alloc_base {
@@ -478,12 +483,13 @@ protected:
   typedef typename _Alloc_traits<_Rb_tree_node<_Tp>, _Alloc>::_Alloc_type
           _Alloc_type;
 
-  _Rb_tree_node<_Tp>* _M_get_node()
+  _Rb_tree_node<_Tp>* _M_get_node() // 配置空间
     { return _Alloc_type::allocate(1); }
-  void _M_put_node(_Rb_tree_node<_Tp>* __p)
+  void _M_put_node(_Rb_tree_node<_Tp>* __p) // 释放空间
     { _Alloc_type::deallocate(__p, 1); }
 };
 
+// _Rb_tree 的基类
 template <class _Tp, class _Alloc>
 struct _Rb_tree_base
   : public _Rb_tree_alloc_base<_Tp, _Alloc,
@@ -525,6 +531,7 @@ protected:
 
 #endif /* __STL_USE_STD_ALLOCATORS */
 
+// _Rb_tree 数据结构
 template <class _Key, class _Value, class _KeyOfValue, class _Compare,
           class _Alloc = __STL_DEFAULT_ALLOCATOR(_Value) >
 class _Rb_tree : protected _Rb_tree_base<_Value, _Alloc> {
@@ -551,21 +558,22 @@ protected:
 #ifdef __STL_USE_NAMESPACES
   using _Base::_M_get_node;
   using _Base::_M_put_node;
-  using _Base::_M_header;
+  using _Base::_M_header;  // header，实现上的技巧
 #endif /* __STL_USE_NAMESPACES */
 
 protected:
-
+  // 创建一个节点
   _Link_type _M_create_node(const value_type& __x)
   {
-    _Link_type __tmp = _M_get_node();
+    _Link_type __tmp = _M_get_node(); // 配置空间
     __STL_TRY {
-      construct(&__tmp->_M_value_field, __x);
+      construct(&__tmp->_M_value_field, __x); // 构造内容
     }
     __STL_UNWIND(_M_put_node(__tmp));
     return __tmp;
   }
-
+  
+  // 复制一个节点，注意节点的数据结构
   _Link_type _M_clone_node(_Link_type __x)
   {
     _Link_type __tmp = _M_create_node(__x->_M_value_field);
@@ -575,16 +583,18 @@ protected:
     return __tmp;
   }
 
+  // 删除一个节点
   void destroy_node(_Link_type __p)
   {
-    destroy(&__p->_M_value_field);
-    _M_put_node(__p);
+    destroy(&__p->_M_value_field); // 析构内容
+    _M_put_node(__p); // 释放空间
   }
 
 protected:
-  size_type _M_node_count; // keeps track of size of tree
-  _Compare _M_key_compare;
+  size_type _M_node_count; // keeps track of size of tree 节点数量
+  _Compare _M_key_compare; // 节点间的键值大小比较准则
 
+  // 利用 header 快速找到 RB-tree 最小值，最大值，根节点
   _Link_type& _M_root() const 
     { return (_Link_type&) _M_header->_M_parent; }
   _Link_type& _M_leftmost() const 
@@ -592,6 +602,7 @@ protected:
   _Link_type& _M_rightmost() const 
     { return (_Link_type&) _M_header->_M_right; }
 
+  // 获取 __x 的成员
   static _Link_type& _S_left(_Link_type __x)
     { return (_Link_type&)(__x->_M_left); }
   static _Link_type& _S_right(_Link_type __x)
@@ -617,7 +628,7 @@ protected:
     { return _KeyOfValue()(_S_value(_Link_type(__x)));} 
   static _Color_type& _S_color(_Base_ptr __x)
     { return (_Color_type&)(_Link_type(__x)->_M_color); }
-
+  // 求最小值和最大值
   static _Link_type _S_minimum(_Link_type __x) 
     { return (_Link_type)  _Rb_tree_node_base::_S_minimum(__x); }
 
@@ -625,7 +636,7 @@ protected:
     { return (_Link_type) _Rb_tree_node_base::_S_maximum(__x); }
 
 public:
-  typedef _Rb_tree_iterator<value_type, reference, pointer> iterator;
+  typedef _Rb_tree_iterator<value_type, reference, pointer> iterator; // RB-tree 迭代器
   typedef _Rb_tree_iterator<value_type, const_reference, const_pointer> 
           const_iterator;
 
@@ -647,7 +658,7 @@ private:
   void _M_erase(_Link_type __x);
 
 public:
-                                // allocation/deallocation
+                            // allocation/deallocation
   _Rb_tree()
     : _Base(allocator_type()), _M_node_count(0), _M_key_compare()
     { _M_empty_initialize(); }
@@ -659,7 +670,7 @@ public:
   _Rb_tree(const _Compare& __comp, const allocator_type& __a)
     : _Base(__a), _M_node_count(0), _M_key_compare(__comp) 
     { _M_empty_initialize(); }
-
+  // 初始化
   _Rb_tree(const _Rb_tree<_Key,_Value,_KeyOfValue,_Compare,_Alloc>& __x) 
     : _Base(__x.get_allocator()),
       _M_node_count(0), _M_key_compare(__x._M_key_compare)
@@ -667,8 +678,8 @@ public:
     if (__x._M_root() == 0)
       _M_empty_initialize();
     else {
-      _S_color(_M_header) = _S_rb_tree_red;
-      _M_root() = _M_copy(__x._M_root(), _M_header);
+      _S_color(_M_header) = _S_rb_tree_red;  // header 的颜色为红色
+      _M_root() = _M_copy(__x._M_root(), _M_header); // 根节点的颜色为黑色
       _M_leftmost() = _S_minimum(_M_root());
       _M_rightmost() = _S_maximum(_M_root());
     }
@@ -690,9 +701,9 @@ private:
 public:    
                                 // accessors:
   _Compare key_comp() const { return _M_key_compare; }
-  iterator begin() { return _M_leftmost(); }
-  const_iterator begin() const { return _M_leftmost(); }
-  iterator end() { return _M_header; }
+  iterator begin() { return _M_leftmost(); } // RB-tree 的起点为最左节点处
+  const_iterator begin() const { return _M_leftmost(); } 
+  iterator end() { return _M_header; }  // RB-tree 的终点为 header 所指处
   const_iterator end() const { return _M_header; }
   reverse_iterator rbegin() { return reverse_iterator(end()); }
   const_reverse_iterator rbegin() const { 
@@ -717,8 +728,8 @@ public:
   pair<iterator,bool> insert_unique(const value_type& __x);
   iterator insert_equal(const value_type& __x);
 
-  iterator insert_unique(iterator __position, const value_type& __x);
-  iterator insert_equal(iterator __position, const value_type& __x);
+  iterator insert_unique(iterator __position, const value_type& __x); // 将 __x 插入到 RB-tree 唯一
+  iterator insert_equal(iterator __position, const value_type& __x); // 将 __x 插入到 RB-tree，允许重复
 
 #ifdef __STL_MEMBER_TEMPLATES  
   template <class _InputIterator>
@@ -763,6 +774,7 @@ public:
   bool __rb_verify() const;
 };
 
+// 比较操作
 template <class _Key, class _Value, class _KeyOfValue, 
           class _Compare, class _Alloc>
 inline bool 
@@ -829,7 +841,7 @@ swap(_Rb_tree<_Key,_Value,_KeyOfValue,_Compare,_Alloc>& __x,
 
 #endif /* __STL_FUNCTION_TMPL_PARTIAL_ORDER */
 
-
+// 赋值操作符
 template <class _Key, class _Value, class _KeyOfValue, 
           class _Compare, class _Alloc>
 _Rb_tree<_Key,_Value,_KeyOfValue,_Compare,_Alloc>& 
@@ -856,6 +868,7 @@ _Rb_tree<_Key,_Value,_KeyOfValue,_Compare,_Alloc>
   return *this;
 }
 
+// RB-tree 元素插入操作，_KeyOfValue 为仿函数
 template <class _Key, class _Value, class _KeyOfValue, 
           class _Compare, class _Alloc>
 typename _Rb_tree<_Key,_Value,_KeyOfValue,_Compare,_Alloc>::iterator
@@ -892,6 +905,7 @@ _Rb_tree<_Key,_Value,_KeyOfValue,_Compare,_Alloc>
   return iterator(__z);
 }
 
+// 插入新值，节点键值允许重复
 template <class _Key, class _Value, class _KeyOfValue, 
           class _Compare, class _Alloc>
 typename _Rb_tree<_Key,_Value,_KeyOfValue,_Compare,_Alloc>::iterator
@@ -899,16 +913,17 @@ _Rb_tree<_Key,_Value,_KeyOfValue,_Compare,_Alloc>
   ::insert_equal(const _Value& __v)
 {
   _Link_type __y = _M_header;
-  _Link_type __x = _M_root();
+  _Link_type __x = _M_root(); // 从根节点开始
   while (__x != 0) {
-    __y = __x;
+    __y = __x;  
+    // 当插入值大于当前节点的值，向右，否则反之
     __x = _M_key_compare(_KeyOfValue()(__v), _S_key(__x)) ? 
             _S_left(__x) : _S_right(__x);
   }
-  return _M_insert(__x, __y, __v);
+  return _M_insert(__x, __y, __v); // __x 为插入节点，__y 为插入节点的父节点， __v 为插入节点的值
 }
 
-
+// 插入新值，节点键值不允许重复，唯一
 template <class _Key, class _Value, class _KeyOfValue, 
           class _Compare, class _Alloc>
 pair<typename _Rb_tree<_Key,_Value,_KeyOfValue,_Compare,_Alloc>::iterator, 
@@ -1149,6 +1164,7 @@ void _Rb_tree<_Key,_Value,_KeyOfValue,_Compare,_Alloc>
   while (__first != __last) erase(*__first++);
 }
 
+// find 查找
 template <class _Key, class _Value, class _KeyOfValue, 
           class _Compare, class _Alloc>
 typename _Rb_tree<_Key,_Value,_KeyOfValue,_Compare,_Alloc>::iterator 
