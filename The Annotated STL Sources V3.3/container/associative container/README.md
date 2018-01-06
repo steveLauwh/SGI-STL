@@ -19,6 +19,18 @@ SGI STL 有实现 RB-tree(红黑树) 的源码。
 
 ### [set](https://github.com/steveLauwh/SGI-STL/tree/master/The%20Annotated%20STL%20Sources%20V3.3/container/associative%20container/set)
 
+set 元素的键值就是实值，实值就是键值。简单理解，含有 Key 类型对象的已排序集。
+
+set 不允许两个元素有相同的键值，同时所有元素根据键值自动排序。
+
+```cpp
+template<
+    class Key,
+    class Compare = std::less<Key>, // 默认递增排序
+    class Allocator = std::allocator<Key>
+> class set;
+```
+
 ### [map](https://github.com/steveLauwh/SGI-STL/tree/master/The%20Annotated%20STL%20Sources%20V3.3/container/associative%20container/map)
 
 ### [multiset](https://github.com/steveLauwh/SGI-STL/tree/master/The%20Annotated%20STL%20Sources%20V3.3/container/associative%20container/multiset)
