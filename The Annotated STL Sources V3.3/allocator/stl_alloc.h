@@ -16,6 +16,7 @@
  */
 
 // <stl_alloc.h> 被包含到其它的 STL 头文件中，并不是直接使用
+// SGI STL 两级配置
 
 #ifndef __SGI_STL_INTERNAL_ALLOC_H
 #define __SGI_STL_INTERNAL_ALLOC_H
