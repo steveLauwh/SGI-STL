@@ -111,7 +111,7 @@ public:
   template <class _InputIterator>
   multimap(_InputIterator __first, _InputIterator __last)
     : _M_t(_Compare(), allocator_type())
-    { _M_t.insert_equal(__first, __last); }
+    { _M_t.insert_equal(__first, __last); }  // multimap 与 map 差别在于使用 insert_equal
 
   template <class _InputIterator>
   multimap(_InputIterator __first, _InputIterator __last,
