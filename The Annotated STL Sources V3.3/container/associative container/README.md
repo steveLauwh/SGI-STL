@@ -50,7 +50,15 @@ template<
 
 ### [multiset](https://github.com/steveLauwh/SGI-STL/tree/master/The%20Annotated%20STL%20Sources%20V3.3/container/associative%20container/multiset)
 
+multiset 和 set 的用法和特性完全相同，唯一的差别是 multiset 允许键值重复。
+
+multiset 的插入操作采用的是底层机制 RB-tree 的 insert_equal()。
+
 ### [multimap](https://github.com/steveLauwh/SGI-STL/tree/master/The%20Annotated%20STL%20Sources%20V3.3/container/associative%20container/multimap)
+
+multimap 和 map 的用法和特性完全相同，唯一的差别是 multimap 允许键值重复。
+
+multimap 的插入操作采用的是底层机制 RB-tree 的 insert_equal()。
 
 ## 以 hash table 为底层机制的关联式容器
 
