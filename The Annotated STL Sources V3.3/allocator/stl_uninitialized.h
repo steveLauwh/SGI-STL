@@ -33,7 +33,7 @@
 
 __STL_BEGIN_NAMESPACE
 
-// uninitialized_copy
+// uninitialized_copy 调用 copy constructor
 
 // Valid if copy construction is equivalent to assignment, and if the
 //  destructor is trivial.
