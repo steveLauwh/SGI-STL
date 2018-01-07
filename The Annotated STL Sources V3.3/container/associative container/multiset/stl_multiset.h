@@ -98,7 +98,7 @@ public:
   template <class _InputIterator>
   multiset(_InputIterator __first, _InputIterator __last)
     : _M_t(_Compare(), allocator_type())
-    { _M_t.insert_equal(__first, __last); }
+    { _M_t.insert_equal(__first, __last); }  // 与 set 唯一区别：调用 insert_equal
 
   template <class _InputIterator>
   multiset(_InputIterator __first, _InputIterator __last,
