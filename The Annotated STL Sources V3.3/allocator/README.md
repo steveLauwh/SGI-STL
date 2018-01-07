@@ -4,6 +4,8 @@
 
 空间配置器：整个 STL 的操作对象(所有的数值)都存放在容器之内，而容器一定需要配置空间以存放内容。
 
+![](https://github.com/steveLauwh/SGI-STL/tree/master/The%20Annotated%20STL%20Sources%20V3.3/Other/allocator.PNG)
+
 ## 具有次配置力(sub-allocation)的 SGI 空间配置器
 
 ### SGI STL 空间配置器的结构
@@ -69,6 +71,6 @@ static _Obj* __STL_VOLATILE _S_free_list[_NFREELISTS];  // 注意，它是数�
 
 配置器负责配置，同时也负责回收。
 
-
+![](https://github.com/steveLauwh/SGI-STL/tree/master/The%20Annotated%20STL%20Sources%20V3.3/Other/allocator_memorypool.PNG)
 
 
