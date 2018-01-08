@@ -76,3 +76,4 @@ SGI STL 使用质数来设计 buckets 个数，质数从 53 开始，总共 28 �
 
 SGI STL 的 hash table 实现由 vector 和 linked list 组合而成。
 
+SGI STL 默认的 hash function 是计算元素位置的函数，元素类型只支持 `char*`，`char`，`int`，`long`，`short`。
