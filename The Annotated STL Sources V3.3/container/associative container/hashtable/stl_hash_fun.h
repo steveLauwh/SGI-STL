@@ -37,6 +37,7 @@ __STL_BEGIN_NAMESPACE
 
 template <class _Key> struct hash { };
 
+// 对字符字符串进行转换
 inline size_t __stl_hash_string(const char* __s)
 {
   unsigned long __h = 0; 
@@ -56,6 +57,7 @@ __STL_TEMPLATE_NULL struct hash<const char*>
   size_t operator()(const char* __s) const { return __stl_hash_string(__s); }
 };
 
+// 其它类型，直接返回原值
 __STL_TEMPLATE_NULL struct hash<char> {
   size_t operator()(char __x) const { return __x; }
 };
