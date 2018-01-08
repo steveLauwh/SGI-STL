@@ -44,6 +44,9 @@ struct _Hashtable_iterator {
 
 ```cpp
 // hash table 数据结构
+// _Val 节点的实值类型，_Key 节点的键值类型，_HashFcn 哈希函数的类型
+// _ExtractKey 从节点中取出键值的方法，_EqualKey 判断键值是否相同的方法
+// _Alloc 空间配置器
 template <class _Val, class _Key, class _HashFcn,
           class _ExtractKey, class _EqualKey, class _Alloc>
 class hashtable {
@@ -59,4 +62,17 @@ private:
 };
 ```
 
+```cpp
+  // 接受键值和 buckets 个数，求出该元素在属于 bucket
+  size_type _M_bkt_num_key(const key_type& __key, size_t __n) const
+  {
+    return _M_hash(__key) % __n;
+  }
+```
+
+SGI STL 使用质数来设计 buckets 个数，质数从 53 开始，总共 28 个质数，当用户需要多少个 buckets，选取“最接近某数并大于某数”的质数。
+
+### 总结
+
+SGI STL 的 hash table 实现由 vector 和 linked list 组合而成。
 
