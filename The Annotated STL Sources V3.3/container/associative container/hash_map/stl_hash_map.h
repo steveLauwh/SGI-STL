@@ -52,6 +52,7 @@ template <class _Key, class _Tp, class _HashFn, class _EqKey, class _Alloc>
 inline bool operator==(const hash_map<_Key, _Tp, _HashFn, _EqKey, _Alloc>&,
                        const hash_map<_Key, _Tp, _HashFn, _EqKey, _Alloc>&);
 
+// hash_map 实现 <key, value>
 template <class _Key, class _Tp, class _HashFcn, class _EqualKey,
           class _Alloc>
 class hash_map
@@ -65,7 +66,7 @@ class hash_map
 
 private:
   typedef hashtable<pair<const _Key,_Tp>,_Key,_HashFcn,
-                    _Select1st<pair<const _Key,_Tp> >,_EqualKey,_Alloc> _Ht;
+                    _Select1st<pair<const _Key,_Tp> >,_EqualKey,_Alloc> _Ht;  // 底层机制 hash table
   _Ht _M_ht;
 
 public:
@@ -93,7 +94,7 @@ public:
   allocator_type get_allocator() const { return _M_ht.get_allocator(); }
 
 public:
-  hash_map() : _M_ht(100, hasher(), key_equal(), allocator_type()) {}
+  hash_map() : _M_ht(100, hasher(), key_equal(), allocator_type()) {}  // 默认 hashtable 大小为 100
   explicit hash_map(size_type __n)
     : _M_ht(__n, hasher(), key_equal(), allocator_type()) {}
   hash_map(size_type __n, const hasher& __hf)
@@ -126,7 +127,7 @@ public:
 #else
   hash_map(const value_type* __f, const value_type* __l)
     : _M_ht(100, hasher(), key_equal(), allocator_type())
-    { _M_ht.insert_unique(__f, __l); }
+    { _M_ht.insert_unique(__f, __l); }   // hash_map 不允许键值有重复的元素
   hash_map(const value_type* __f, const value_type* __l, size_type __n)
     : _M_ht(__n, hasher(), key_equal(), allocator_type())
     { _M_ht.insert_unique(__f, __l); }
@@ -251,7 +252,7 @@ swap(hash_map<_Key,_Tp,_HashFcn,_EqlKey,_Alloc>& __hm1,
 #endif /* __STL_FUNCTION_TMPL_PARTIAL_ORDER */
 
 // Forward declaration of equality operator; needed for friend declaration.
-
+// hash_multimap 实现
 template <class _Key, class _Tp,
           class _HashFcn  __STL_DEPENDENT_DEFAULT_TMPL(hash<_Key>),
           class _EqualKey __STL_DEPENDENT_DEFAULT_TMPL(equal_to<_Key>),
@@ -276,7 +277,7 @@ class hash_multimap
 
 private:
   typedef hashtable<pair<const _Key, _Tp>, _Key, _HashFcn,
-                    _Select1st<pair<const _Key, _Tp> >, _EqualKey, _Alloc> 
+                    _Select1st<pair<const _Key, _Tp> >, _EqualKey, _Alloc>  // 底层机制也是 hash table
           _Ht;
   _Ht _M_ht;
 
@@ -337,8 +338,8 @@ public:
 
 #else
   hash_multimap(const value_type* __f, const value_type* __l)
-    : _M_ht(100, hasher(), key_equal(), allocator_type())
-    { _M_ht.insert_equal(__f, __l); }
+    : _M_ht(100, hasher(), key_equal(), allocator_type())  
+    { _M_ht.insert_equal(__f, __l); } // 与 hash_map 唯一差别是允许键值重复
   hash_multimap(const value_type* __f, const value_type* __l, size_type __n)
     : _M_ht(__n, hasher(), key_equal(), allocator_type())
     { _M_ht.insert_equal(__f, __l); }
