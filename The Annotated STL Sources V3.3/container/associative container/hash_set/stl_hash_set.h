@@ -53,6 +53,7 @@ inline bool
 operator==(const hash_set<_Value,_HashFcn,_EqualKey,_Alloc>& __hs1,
            const hash_set<_Value,_HashFcn,_EqualKey,_Alloc>& __hs2);
 
+// hash_set 实现
 template <class _Value, class _HashFcn, class _EqualKey, class _Alloc>
 class hash_set
 {
@@ -64,7 +65,7 @@ class hash_set
 
 private:
   typedef hashtable<_Value, _Value, _HashFcn, _Identity<_Value>, 
-                    _EqualKey, _Alloc> _Ht;
+                    _EqualKey, _Alloc> _Ht; // 底层机制 hash table
   _Ht _M_ht;
 
 public:
@@ -91,7 +92,7 @@ public:
 
 public:
   hash_set()
-    : _M_ht(100, hasher(), key_equal(), allocator_type()) {}
+    : _M_ht(100, hasher(), key_equal(), allocator_type()) {} // 默认 buckets 大小为 100
   explicit hash_set(size_type __n)
     : _M_ht(__n, hasher(), key_equal(), allocator_type()) {}
   hash_set(size_type __n, const hasher& __hf)
@@ -104,7 +105,7 @@ public:
   template <class _InputIterator>
   hash_set(_InputIterator __f, _InputIterator __l)
     : _M_ht(100, hasher(), key_equal(), allocator_type())
-    { _M_ht.insert_unique(__f, __l); }
+    { _M_ht.insert_unique(__f, __l); }  // hash_set 调用 insert_unique，保证元素唯一
   template <class _InputIterator>
   hash_set(_InputIterator __f, _InputIterator __l, size_type __n)
     : _M_ht(__n, hasher(), key_equal(), allocator_type())
@@ -256,7 +257,7 @@ inline bool
 operator==(const hash_multiset<_Val,_HashFcn,_EqualKey,_Alloc>& __hs1,
            const hash_multiset<_Val,_HashFcn,_EqualKey,_Alloc>& __hs2);
 
-
+// hash_multiset 实现
 template <class _Value, class _HashFcn, class _EqualKey, class _Alloc>
 class hash_multiset
 {
@@ -328,7 +329,7 @@ public:
 
   hash_multiset(const value_type* __f, const value_type* __l)
     : _M_ht(100, hasher(), key_equal(), allocator_type())
-    { _M_ht.insert_equal(__f, __l); }
+    { _M_ht.insert_equal(__f, __l); }  // 与 hash_set 唯一差别，允许键值重复
   hash_multiset(const value_type* __f, const value_type* __l, size_type __n)
     : _M_ht(__n, hasher(), key_equal(), allocator_type())
     { _M_ht.insert_equal(__f, __l); }
