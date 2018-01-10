@@ -28,12 +28,14 @@
  *   You should not attempt to use it directly.
  */
 
-
+// 数值算法
 #ifndef __SGI_STL_INTERNAL_NUMERIC_H
 #define __SGI_STL_INTERNAL_NUMERIC_H
 
 __STL_BEGIN_NAMESPACE
 
+// 累加运算
+// 计算给定值 init 与给定范围 [first, last) 中元素的和
 template <class _InputIterator, class _Tp>
 _Tp accumulate(_InputIterator __first, _InputIterator __last, _Tp __init)
 {
@@ -43,6 +45,7 @@ _Tp accumulate(_InputIterator __first, _InputIterator __last, _Tp __init)
   return __init;
 }
 
+// 用二元函数 op 计算
 template <class _InputIterator, class _Tp, class _BinaryOperation>
 _Tp accumulate(_InputIterator __first, _InputIterator __last, _Tp __init,
                _BinaryOperation __binary_op)
@@ -53,6 +56,7 @@ _Tp accumulate(_InputIterator __first, _InputIterator __last, _Tp __init,
   return __init;
 }
 
+// 计算两个区间元素的内积 
 template <class _InputIterator1, class _InputIterator2, class _Tp>
 _Tp inner_product(_InputIterator1 __first1, _InputIterator1 __last1,
                   _InputIterator2 __first2, _Tp __init)
@@ -64,6 +68,7 @@ _Tp inner_product(_InputIterator1 __first1, _InputIterator1 __last1,
   return __init;
 }
 
+// 用两个二元函数计算
 template <class _InputIterator1, class _InputIterator2, class _Tp,
           class _BinaryOperation1, class _BinaryOperation2>
 _Tp inner_product(_InputIterator1 __first1, _InputIterator1 __last1,
@@ -78,6 +83,7 @@ _Tp inner_product(_InputIterator1 __first1, _InputIterator1 __last1,
   return __init;
 }
 
+// 计算范围 [first, last) 的子范围中元素的部分和，并写入到始于 result 的范围
 template <class _InputIterator, class _OutputIterator, class _Tp>
 _OutputIterator 
 __partial_sum(_InputIterator __first, _InputIterator __last,
@@ -130,6 +136,7 @@ partial_sum(_InputIterator __first, _InputIterator __last,
                        __binary_op);
 }
 
+// 计算区间内相邻元素之间的差 
 template <class _InputIterator, class _OutputIterator, class _Tp>
 _OutputIterator 
 __adjacent_difference(_InputIterator __first, _InputIterator __last,
@@ -138,12 +145,13 @@ __adjacent_difference(_InputIterator __first, _InputIterator __last,
   _Tp __value = *__first;
   while (++__first != __last) {
     _Tp __tmp = *__first;
-    *++__result = __tmp - __value;
+    *++__result = __tmp - __value;  // 存储位置，第一个元素不变
     __value = __tmp;
   }
   return ++__result;
 }
 
+// 调用 __adjacent_difference
 template <class _InputIterator, class _OutputIterator>
 _OutputIterator
 adjacent_difference(_InputIterator __first,
@@ -189,7 +197,7 @@ adjacent_difference(_InputIterator __first, _InputIterator __last,
 // Returns __x ** __n, where __n >= 0.  _Note that "multiplication"
 // is required to be associative, but not necessarily commutative.
 
- 
+// 求幂，power 不属于 STL 标准，属于 SGI 专属
 template <class _Tp, class _Integer, class _MonoidOperation>
 _Tp __power(_Tp __x, _Integer __n, _MonoidOperation __opr)
 {
@@ -235,7 +243,7 @@ inline _Tp power(_Tp __x, _Integer __n)
 }
 
 // iota is not part of the C++ standard.  It is an extension.
-
+// 以始于 value 并重复地求值 ++value 的顺序递增值填充范围 [first, last) 
 template <class _ForwardIter, class _Tp>
 void 
 iota(_ForwardIter __first, _ForwardIter __last, _Tp __value)
