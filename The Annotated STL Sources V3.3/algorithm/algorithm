@@ -27,6 +27,7 @@
 #ifndef __SGI_STL_ALGORITHM
 #define __SGI_STL_ALGORITHM
 
+// 头文件
 #include <stl_algobase.h>
 #include <stl_construct.h>
 #include <stl_uninitialized.h>
