@@ -28,7 +28,7 @@
  *   You should not attempt to use it directly.
  */
 
-
+// 基本算法的内部实现
 #ifndef __SGI_STL_INTERNAL_ALGOBASE_H
 #define __SGI_STL_INTERNAL_ALGOBASE_H
 
@@ -68,6 +68,7 @@ __STL_BEGIN_NAMESPACE
 
 // swap and iter_swap
 
+// 将两个迭代器所指元素对调
 template <class _ForwardIter1, class _ForwardIter2, class _Tp>
 inline void __iter_swap(_ForwardIter1 __a, _ForwardIter2 __b, _Tp*) {
   _Tp __tmp = *__a;
@@ -83,9 +84,9 @@ inline void iter_swap(_ForwardIter1 __a, _ForwardIter2 __b) {
                     typename iterator_traits<_ForwardIter2>::value_type);
   __STL_CONVERTIBLE(typename iterator_traits<_ForwardIter2>::value_type,
                     typename iterator_traits<_ForwardIter1>::value_type);
-  __iter_swap(__a, __b, __VALUE_TYPE(__a));
-}
+  __iter_swap(__a, __b, __VALUE_TYPE(__a));  // 迭代器类型
 
+// 交换
 template <class _Tp>
 inline void swap(_Tp& __a, _Tp& __b) {
   __STL_REQUIRES(_Tp, _Assignable);
@@ -102,12 +103,14 @@ inline void swap(_Tp& __a, _Tp& __b) {
 #undef min
 #undef max
 
+// 取两个值最小值
 template <class _Tp>
 inline const _Tp& min(const _Tp& __a, const _Tp& __b) {
   __STL_REQUIRES(_Tp, _LessThanComparable);
   return __b < __a ? __b : __a;
 }
 
+// 取两个值最大值
 template <class _Tp>
 inline const _Tp& max(const _Tp& __a, const _Tp& __b) {
   __STL_REQUIRES(_Tp, _LessThanComparable);
@@ -116,6 +119,7 @@ inline const _Tp& max(const _Tp& __a, const _Tp& __b) {
 
 #endif /* __BORLANDC__ */
 
+// 用仿函数 __comp 来判断大小
 template <class _Tp, class _Compare>
 inline const _Tp& min(const _Tp& __a, const _Tp& __b, _Compare __comp) {
   return __comp(__b, __a) ? __b : __a;
@@ -134,7 +138,8 @@ inline const _Tp& max(const _Tp& __a, const _Tp& __b, _Compare __comp) {
 // because the input and output ranges are permitted to overlap.)
 // (2) If we're using random access iterators, then write the loop as
 // a for loop with an explicit count.
-
+// copy 函数-效率 memmove
+// copy 版本
 template <class _InputIter, class _OutputIter, class _Distance>
 inline _OutputIter __copy(_InputIter __first, _InputIter __last,
                           _OutputIter __result,
@@ -158,6 +163,7 @@ __copy(_RandomAccessIter __first, _RandomAccessIter __last,
   return __result;
 }
 
+// 使用 memmove
 template <class _Tp>
 inline _Tp*
 __copy_trivial(const _Tp* __first, const _Tp* __last, _Tp* __result) {
@@ -219,7 +225,7 @@ inline _OutputIter copy(_InputIter __first, _InputIter __last,
 // Hack for compilers that don't have partial ordering of function templates
 // but do have partial specialization of class templates.
 #elif defined(__STL_CLASS_PARTIAL_SPECIALIZATION)
-
+// 完全泛化版本 __copy_dispatch
 template <class _InputIter, class _OutputIter, class _BoolType>
 struct __copy_dispatch {
   static _OutputIter copy(_InputIter __first, _InputIter __last,
@@ -230,6 +236,7 @@ struct __copy_dispatch {
   }
 };
 
+// 偏特化
 template <class _Tp>
 struct __copy_dispatch<_Tp*, _Tp*, __true_type>
 {
@@ -238,6 +245,7 @@ struct __copy_dispatch<_Tp*, _Tp*, __true_type>
   }
 };
 
+// 偏特化
 template <class _Tp>
 struct __copy_dispatch<const _Tp*, _Tp*, __true_type>
 {
@@ -246,6 +254,7 @@ struct __copy_dispatch<const _Tp*, _Tp*, __true_type>
   }
 };
 
+// 完全泛化版本-copy，调用 __copy_dispatch
 template <class _InputIter, class _OutputIter>
 inline _OutputIter copy(_InputIter __first, _InputIter __last,
                         _OutputIter __result) {
@@ -303,7 +312,7 @@ __SGI_STL_DECLARE_COPY_TRIVIAL(long double)
 
 //--------------------------------------------------
 // copy_backward
-
+// 逆向复制
 template <class _BidirectionalIter1, class _BidirectionalIter2, 
           class _Distance>
 inline _BidirectionalIter2 __copy_backward(_BidirectionalIter1 __first, 
@@ -397,7 +406,7 @@ inline _BI2 copy_backward(_BI1 __first, _BI1 __last, _BI2 __result) {
 
 //--------------------------------------------------
 // copy_n (not part of the C++ standard)
-
+// copy_n 复制 __count 个元素
 template <class _InputIter, class _Size, class _OutputIter>
 pair<_InputIter, _OutputIter> __copy_n(_InputIter __first, _Size __count,
                                        _OutputIter __result,
@@ -437,7 +446,7 @@ copy_n(_InputIter __first, _Size __count, _OutputIter __result) {
 //--------------------------------------------------
 // fill and fill_n
 
-
+// 将 [first, last) 内的所有元素改填新值
 template <class _ForwardIter, class _Tp>
 void fill(_ForwardIter __first, _ForwardIter __last, const _Tp& __value) {
   __STL_REQUIRES(_ForwardIter, _Mutable_ForwardIterator);
@@ -445,6 +454,7 @@ void fill(_ForwardIter __first, _ForwardIter __last, const _Tp& __value) {
     *__first = __value;
 }
 
+// 将 [first, last) 内的前 n 个元素改填新值
 template <class _OutputIter, class _Size, class _Tp>
 _OutputIter fill_n(_OutputIter __first, _Size __n, const _Tp& __value) {
   __STL_REQUIRES(_OutputIter, _OutputIterator);
@@ -454,7 +464,7 @@ _OutputIter fill_n(_OutputIter __first, _Size __n, const _Tp& __value) {
 }
 
 // Specialization: for one-byte types we can use memset.
-
+// 特化，使用 memset
 inline void fill(unsigned char* __first, unsigned char* __last,
                  const unsigned char& __c) {
   unsigned char __tmp = __c;
@@ -498,7 +508,7 @@ inline char* fill_n(char* __first, _Size __n, const char& __c) {
 
 //--------------------------------------------------
 // equal and mismatch
-
+// mismatch 平行比较两个序列，指出两者之间的第一个不匹配点，返回一对迭代器
 template <class _InputIter1, class _InputIter2>
 pair<_InputIter1, _InputIter2> mismatch(_InputIter1 __first1,
                                         _InputIter1 __last1,
@@ -530,6 +540,7 @@ pair<_InputIter1, _InputIter2> mismatch(_InputIter1 __first1,
   return pair<_InputIter1, _InputIter2>(__first1, __first2);
 }
 
+// 判断两个序列在 [first, last) 的元素是否相等
 template <class _InputIter1, class _InputIter2>
 inline bool equal(_InputIter1 __first1, _InputIter1 __last1,
                   _InputIter2 __first2) {
@@ -544,7 +555,7 @@ inline bool equal(_InputIter1 __first1, _InputIter1 __last1,
       return false;
   return true;
 }
-
+// __binary_pred 仿函数
 template <class _InputIter1, class _InputIter2, class _BinaryPredicate>
 inline bool equal(_InputIter1 __first1, _InputIter1 __last1,
                   _InputIter2 __first2, _BinaryPredicate __binary_pred) {
@@ -559,7 +570,7 @@ inline bool equal(_InputIter1 __first1, _InputIter1 __last1,
 //--------------------------------------------------
 // lexicographical_compare and lexicographical_compare_3way.
 // (the latter is not part of the C++ standard.)
-
+// 以"字典排列方式"对两个序列 [first, last) 进行比较
 template <class _InputIter1, class _InputIter2>
 bool lexicographical_compare(_InputIter1 __first1, _InputIter1 __last1,
                              _InputIter2 __first2, _InputIter2 __last2) {
@@ -595,6 +606,7 @@ bool lexicographical_compare(_InputIter1 __first1, _InputIter1 __last1,
   return __first1 == __last1 && __first2 != __last2;
 }
 
+// 特化版 lexicographical_compare，使用 memcmp
 inline bool 
 lexicographical_compare(const unsigned char* __first1,
                         const unsigned char* __last1,
