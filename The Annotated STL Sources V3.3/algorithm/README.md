@@ -1,5 +1,7 @@
 ## 算法(algorithm)
 
+![](https://github.com/steveLauwh/SGI-STL/raw/master/The%20Annotated%20STL%20Sources%20V3.3/Other/STLAlgorithm.png)
+
 算法：各种常用算法如 sort，search，copy，erase 等，从实现的角度来看，STL 算法是一种 function template。
 
 所有泛型算法的前两个参数都是一对迭代器，STL 习惯使用前闭后开的区间，`[first, last)`。
