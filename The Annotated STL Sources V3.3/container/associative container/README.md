@@ -10,7 +10,7 @@
 
 SGI STL 有实现 RB-tree(红黑树) 的源码。
 
-![](https://github.com/steveLauwh/SGI-STL/tree/master/The%20Annotated%20STL%20Sources%20V3.3/Other/RBTree.PNG)
+![](https://github.com/steveLauwh/SGI-STL/raw/master/The%20Annotated%20STL%20Sources%20V3.3/Other/RBTree.PNG)
 
 红黑树是一棵特殊的二叉搜索树。
 
