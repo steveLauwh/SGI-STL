@@ -10,6 +10,8 @@
 
 SGI STL 有实现 RB-tree(红黑树) 的源码。
 
+![](https://github.com/steveLauwh/SGI-STL/tree/master/The%20Annotated%20STL%20Sources%20V3.3/Other/RBTree.PNG)
+
 红黑树是一棵特殊的二叉搜索树。
 
 二叉搜索树的元素插入操作：插入新元素时，可以从根节点开始，遇到键值比插入元素大就向左，遇到键值比插入元素小就向右，一直到尾端，即为插入点。
