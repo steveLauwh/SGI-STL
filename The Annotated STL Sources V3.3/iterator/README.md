@@ -25,6 +25,8 @@ auto_ptr：用来包装原生指针(native pointer)的对象，在头文件 <mem
   + reference
   + iterator category
 
+![](https://github.com/steveLauwh/SGI-STL/raw/master/The%20Annotated%20STL%20Sources%20V3.3/Other/iteratortraits.PNG)
+
 ## Traits 编程技术
 
 traits 意为 “特性”，扮演 “特性萃取机” 角色，萃取各个迭代器的特性(相应类型)。
