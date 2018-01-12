@@ -4,6 +4,8 @@
 
 STL 仿函数应该有能力被函数配接器(function adapter)修饰，为了拥有配接能力，每一个仿函数必须定义自己的相应类型。
 
+![](https://github.com/steveLauwh/SGI-STL/raw/master/The%20Annotated%20STL%20Sources%20V3.3/Other/functionobject.png)
+
 ### 以操作数的个数划分，可分为一元和二元仿函数
 
 * `unary_function`
