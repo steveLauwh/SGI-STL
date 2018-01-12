@@ -33,12 +33,14 @@
 
 __STL_BEGIN_NAMESPACE
 
+// 一元函数的参数类型和返回值类型
 template <class _Arg, class _Result>
 struct unary_function {
   typedef _Arg argument_type;
   typedef _Result result_type;
 };
 
+// 二元函数的第一个参数类型和第二个参数类型，以及返回值类型
 template <class _Arg1, class _Arg2, class _Result>
 struct binary_function {
   typedef _Arg1 first_argument_type;
@@ -46,21 +48,25 @@ struct binary_function {
   typedef _Result result_type;
 };      
 
+// 加
 template <class _Tp>
 struct plus : public binary_function<_Tp,_Tp,_Tp> {
   _Tp operator()(const _Tp& __x, const _Tp& __y) const { return __x + __y; }
 };
 
+// 减
 template <class _Tp>
 struct minus : public binary_function<_Tp,_Tp,_Tp> {
   _Tp operator()(const _Tp& __x, const _Tp& __y) const { return __x - __y; }
 };
 
+// 乘
 template <class _Tp>
 struct multiplies : public binary_function<_Tp,_Tp,_Tp> {
   _Tp operator()(const _Tp& __x, const _Tp& __y) const { return __x * __y; }
 };
 
+// 除
 template <class _Tp>
 struct divides : public binary_function<_Tp,_Tp,_Tp> {
   _Tp operator()(const _Tp& __x, const _Tp& __y) const { return __x / __y; }
@@ -75,72 +81,84 @@ template <class _Tp> inline _Tp identity_element(multiplies<_Tp>) {
   return _Tp(1);
 }
 
+// 求余
 template <class _Tp>
 struct modulus : public binary_function<_Tp,_Tp,_Tp> 
 {
   _Tp operator()(const _Tp& __x, const _Tp& __y) const { return __x % __y; }
 };
 
+// 负数
 template <class _Tp>
 struct negate : public unary_function<_Tp,_Tp> 
 {
   _Tp operator()(const _Tp& __x) const { return -__x; }
 };
 
+// 等于
 template <class _Tp>
 struct equal_to : public binary_function<_Tp,_Tp,bool> 
 {
   bool operator()(const _Tp& __x, const _Tp& __y) const { return __x == __y; }
 };
 
+// 不等于
 template <class _Tp>
 struct not_equal_to : public binary_function<_Tp,_Tp,bool> 
 {
   bool operator()(const _Tp& __x, const _Tp& __y) const { return __x != __y; }
 };
 
+// 大于
 template <class _Tp>
 struct greater : public binary_function<_Tp,_Tp,bool> 
 {
   bool operator()(const _Tp& __x, const _Tp& __y) const { return __x > __y; }
 };
 
+// 小于
 template <class _Tp>
 struct less : public binary_function<_Tp,_Tp,bool> 
 {
   bool operator()(const _Tp& __x, const _Tp& __y) const { return __x < __y; }
 };
 
+// 大于等于
 template <class _Tp>
 struct greater_equal : public binary_function<_Tp,_Tp,bool>
 {
   bool operator()(const _Tp& __x, const _Tp& __y) const { return __x >= __y; }
 };
 
+// 小于等于
 template <class _Tp>
 struct less_equal : public binary_function<_Tp,_Tp,bool> 
 {
   bool operator()(const _Tp& __x, const _Tp& __y) const { return __x <= __y; }
 };
 
+// 逻辑与
 template <class _Tp>
 struct logical_and : public binary_function<_Tp,_Tp,bool>
 {
   bool operator()(const _Tp& __x, const _Tp& __y) const { return __x && __y; }
 };
 
+// 逻辑或
 template <class _Tp>
 struct logical_or : public binary_function<_Tp,_Tp,bool>
 {
   bool operator()(const _Tp& __x, const _Tp& __y) const { return __x || __y; }
 };
 
+// 求反
 template <class _Tp>
 struct logical_not : public unary_function<_Tp,bool>
 {
   bool operator()(const _Tp& __x) const { return !__x; }
 };
 
+// 以下是仿函数的适配器
 template <class _Predicate>
 class unary_negate
   : public unary_function<typename _Predicate::argument_type, bool> {
@@ -153,6 +171,7 @@ public:
   }
 };
 
+// not1 是用于创建返回传递的一元谓词的反义的函数对象
 template <class _Predicate>
 inline unary_negate<_Predicate> 
 not1(const _Predicate& __pred)
@@ -176,6 +195,7 @@ public:
   }
 };
 
+// not2 是用于创建返回传递的二元谓词的反义的函数对象
 template <class _Predicate>
 inline binary_negate<_Predicate> 
 not2(const _Predicate& __pred)
