@@ -10,9 +10,28 @@ STL 仿函数应该有能力被函数配接器(function adapter)修饰，为了�
 
 `unary_function` 用来呈现一元函数的参数类型和返回值类型。
 
+```cpp
+// 一元函数的参数类型和返回值类型
+template <class _Arg, class _Result>
+struct unary_function {
+  typedef _Arg argument_type;
+  typedef _Result result_type;
+}; 
+```
+
 * `binary_function`
 
 `binary_function` 用来呈现二元函数的第一参数类型、第二参数类型，以及返回值类型。
+
+```cpp
+// 二元函数的第一个参数类型和第二个参数类型，以及返回值类型
+template <class _Arg1, class _Arg2, class _Result>
+struct binary_function {
+  typedef _Arg1 first_argument_type;
+  typedef _Arg2 second_argument_type;
+  typedef _Result result_type;
+};
+```
 
 ### 功能划分
 
