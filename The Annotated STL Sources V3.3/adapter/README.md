@@ -4,6 +4,8 @@
 
 适配器(adapter) 在 STL 组件的灵活组合运用功能上，扮演者转换器的角色。
 
+![](https://github.com/steveLauwh/SGI-STL/raw/master/The%20Annotated%20STL%20Sources%20V3.3/Other/adapter.PNG)
+
 ### 应用于容器，container adapter
 
 STL 提供的两个容器 queue 和 stack，它们修饰 deque 的接口而形成的。
