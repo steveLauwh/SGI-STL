@@ -2,6 +2,8 @@
 
 SGI STL 的 list 是一个双向链表，同时还是一个环状的双向链表；对于任何位置的元素插入或元素移除，list 永远是常数时间。
 
+![](https://github.com/steveLauwh/SGI-STL/raw/master/The%20Annotated%20STL%20Sources%20V3.3/Other/list.PNG)
+
 ### list 的节点(node)
 
 ```cpp
